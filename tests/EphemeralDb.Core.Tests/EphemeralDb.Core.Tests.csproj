@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EphemeralDb.Core\EphemeralDb.csproj" />
     <ProjectReference Include="..\..\src\EphemeralDb\EphemeralDb.csproj" />
   </ItemGroup>
 
