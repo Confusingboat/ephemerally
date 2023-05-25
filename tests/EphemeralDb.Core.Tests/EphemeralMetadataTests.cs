@@ -17,7 +17,6 @@ public class EphemeralMetadataTests
     [TestCase(1684991964, ExpectedResult = true)]
     public bool IsExpired_as_of_1684991963(long now)
     {
-        var timestamp = DateTimeOffset.UtcNow.AddSeconds(-1);
         var metadata = new EphemeralMetadata("E_1684991963_ABCDEF_Test")
         {
             Expiration = DateTimeOffset.FromUnixTimeSeconds(1684991963),
