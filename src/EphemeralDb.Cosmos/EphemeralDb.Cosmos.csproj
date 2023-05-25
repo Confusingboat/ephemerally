@@ -13,8 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EphemeralDb.Core\EphemeralDb.Core.csproj" />
+    <ProjectReference Include="..\EphemeralDb.Core\EphemeralDb.csproj" />
     <ProjectReference Include="..\EphemeralDb\EphemeralDb.Core.csproj" />
+    <ProjectReference Include="..\EphemeralDb\EphemeralDb.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
 </Project>
