@@ -12,5 +12,8 @@ public static class EphemeralExtensions
         IsExpired(metadata, DateTimeOffset.UtcNow);
 
     internal static bool IsExpired(this EphemeralMetadata metadata, DateTimeOffset now) =>
-        metadata.Expiration.HasValue && metadata.Expiration.Value < now;
+        metadata.Expiration.HasValue && metadata.Expiration.Value <= now;
+
+    public static EphemeralMetadata GetContainerMetadata(this string fullName) =>
+        EphemeralMetadata.FromString(fullName);
 }
