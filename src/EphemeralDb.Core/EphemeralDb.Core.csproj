@@ -8,4 +8,8 @@
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+  </ItemGroup>
+
 </Project>

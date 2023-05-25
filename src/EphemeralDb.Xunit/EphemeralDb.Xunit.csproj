@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EphemeralDb.Cosmos\EphemeralDb.Cosmos.csproj" />
-    <ProjectReference Include="..\EphemeralDb\EphemeralDb.csproj" />
+    <ProjectReference Include="..\EphemeralDb\EphemeralDb.Core.csproj" />
   </ItemGroup>
 
 </Project>
