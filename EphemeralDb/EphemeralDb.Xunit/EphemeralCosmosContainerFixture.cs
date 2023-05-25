@@ -10,13 +10,19 @@ internal abstract class EphemeralCosmosContainerFixture :
 {
     private readonly EphemeralCosmosContainer _container;
 
-    protected EphemeralCosmosContainerFixture(Database database, EphemeralCosmosContainerOptions options = default)
+    protected EphemeralCosmosContainerFixture(
+        Database database,
+        EphemeralOptions options,
+        CosmosContainerOptions cosmosContainerOptions = default)
     {
-        _container = new(database, options ?? EphemeralCosmosContainerOptions.Default);
+        _container = new(
+            database,
+            options ?? EphemeralOptions.Default,
+            cosmosContainerOptions ?? CosmosContainerOptions.Default);
     }
 
     async Task IAsyncLifetime.InitializeAsync() =>
-        await _container.GetContainerAsync();
+        await _container.GetAsync();
 
     async Task IAsyncLifetime.DisposeAsync() =>
         await ((IAsyncDisposable)this).DisposeAsync();
