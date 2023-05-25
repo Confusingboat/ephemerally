@@ -21,14 +21,14 @@ public class EphemeralCosmosContainer : Ephemeral<Container>
         _database = database;
         _cosmosContainerOptions = cosmosContainerOptions;
     }
-    protected override async Task<Container> EnsureExistsAsync()
+    protected override async Task<Container> EnsureExistsAsync(string fullName)
     {
-        var containerProperties = new ContainerProperties(FullName, _cosmosContainerOptions.PartitionKeyPath);
+        var containerProperties = new ContainerProperties(fullName, _cosmosContainerOptions.PartitionKeyPath);
         return await _database.CreateContainerIfNotExistsAsync(containerProperties);
     }
 
-    protected override Task CleanupSelfAsync() =>
-        _database.GetContainer(FullName).DeleteContainerAsync();
+    protected override Task CleanupSelfAsync(string fullName) =>
+        _database.GetContainer(fullName).DeleteContainerAsync();
 
     protected override Task CleanupAllAsync() =>
         _database.CleanupContainersAsync();
