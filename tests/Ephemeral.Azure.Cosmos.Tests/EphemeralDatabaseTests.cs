@@ -20,8 +20,8 @@ public class EphemeralDatabaseTests
     public async Task CleanupBehavior_SelfAndExpired_should_remove_self_and_expired_orphaned_database()
     {
         var client = CosmosEmulator.Client;
-        var orphan = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMilliseconds(1) });
-        var orphanDb = await orphan.GetAsync();
+        var orphanAccessor = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMilliseconds(1) });
+        var orphanDb = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanDb.ExistsAsync(), Is.True);
 
@@ -42,8 +42,8 @@ public class EphemeralDatabaseTests
     public async Task CleanupBehavior_SelfAndExpired_should_remove_self_and_not_remove_unexpired_orphaned_database()
     {
         var client = CosmosEmulator.Client;
-        await using var orphan = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMinutes(1) });
-        var orphanDb = await orphan.GetAsync();
+        await using var orphanAccessor = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMinutes(1) });
+        var orphanDb = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanDb.ExistsAsync(), Is.True);
 
@@ -62,8 +62,8 @@ public class EphemeralDatabaseTests
     public async Task CleanupBehavior_SelfOnly_should_remove_self_only()
     {
         var client = CosmosEmulator.Client;
-        await using var orphan = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMilliseconds(1) });
-        var orphanDb = await orphan.GetAsync();
+        await using var orphanAccessor = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMilliseconds(1) });
+        var orphanDb = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanDb.ExistsAsync(), Is.True);
 
@@ -84,8 +84,8 @@ public class EphemeralDatabaseTests
     public async Task CleanupBehavior_NoCleanup_should_not_remove_anything()
     {
         var client = CosmosEmulator.Client;
-        await using var orphan = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMilliseconds(1) });
-        var orphanDb = await orphan.GetAsync();
+        await using var orphanAccessor = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMilliseconds(1) });
+        var orphanDb = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanDb.ExistsAsync(), Is.True);
 
@@ -101,7 +101,6 @@ public class EphemeralDatabaseTests
         Assert.That(await db.ExistsAsync(), Is.True);
         Assert.That(await orphanDb.ExistsAsync(), Is.True);
 
-        await orphanDb.DeleteAsync();
         await db.DeleteAsync();
     }
 

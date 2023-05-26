@@ -22,16 +22,16 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     /// <summary>
     /// Ephemeral constructor
     /// </summary>
-    /// <param name="expirationTimestampSeconds"></param>
+    /// <param name="expiration"></param>
     /// <param name="nonce"></param>
     /// <param name="friendlyName"></param>
     internal EphemeralMetadata(
-        long expirationTimestampSeconds,
+        DateTimeOffset expiration,
         string nonce,
         string friendlyName)
     {
-        FullName = GetFullName(expirationTimestampSeconds, nonce, friendlyName);
-        Expiration = DateTimeOffset.FromUnixTimeSeconds(expirationTimestampSeconds);
+        FullName = GetFullName(expiration.ToUnixTimeMilliseconds(), nonce, friendlyName);
+        Expiration = expiration;
         NamePart = friendlyName;
         Nonce = nonce;
         IsEphemeral = true;
@@ -40,25 +40,25 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     public override string ToString() => FullName;
 
     public static string GetFullName(
-        long expirationTimestampSeconds,
+        long expirationTimestamp,
         string nonce,
         string name) =>
-        $"{PrefixValue}_{expirationTimestampSeconds}_{nonce}_{name}";
+        $"{PrefixValue}_{expirationTimestamp}_{nonce}_{name}";
 
     public static EphemeralMetadata New(string fullName) =>
         fullName.Split('_') is
         [PrefixValue, var ts, var nonce, var friendlyName] &&
         long.TryParse(ts, out var timestamp)
-            ? new(timestamp, nonce, friendlyName)
+            ? new(DateTimeOffset.FromUnixTimeMilliseconds(timestamp), nonce, friendlyName)
             : new(fullName);
 
     public static EphemeralMetadata New(
         string name,
-        TimeSpan? containerLifetime)
+        DateTimeOffset? expiration)
     {
-        if (!containerLifetime.HasValue) return new(name);
+        if (!expiration.HasValue) return new(name);
 
-        var expirationTimestamp = DateTimeOffset.UtcNow.Add(containerLifetime.Value).ToUnixTimeSeconds();
+        var expirationTimestamp = expiration.Value;
         var nonce = Guid.NewGuid().ToString()[..6];
 
         return new(expirationTimestamp, nonce, name);

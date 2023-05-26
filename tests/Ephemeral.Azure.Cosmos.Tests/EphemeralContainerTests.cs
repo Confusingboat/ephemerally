@@ -6,8 +6,8 @@ public class EphemeralContainerTests
     public async Task Should_create_container_and_tear_it_down()
     {
         var client = CosmosEmulator.Client;
-        await using var db = client.CreateEphemeralDatabaseAsync();
-        var sut = (await db.GetAsync()).CreateEphemeralContainerAsync();
+        await using var databaseAccessor = client.CreateEphemeralDatabaseAsync();
+        var sut = (await databaseAccessor.GetAsync()).CreateEphemeralContainerAsync();
         var container = await sut.GetAsync();
 
         Assert.That(await container.ExistsAsync(), Is.True);
@@ -21,20 +21,19 @@ public class EphemeralContainerTests
     public async Task CleanupBehavior_SelfAndExpired_should_remove_self_and_expired_orphan_container()
     {
         var client = CosmosEmulator.Client;
-        await using var db = client.CreateEphemeralDatabaseAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.Zero });
-        var orphan = (await db.GetAsync()).CreateEphemeralContainerAsync();
-        var orphanContainer = await orphan.GetAsync();
+        await using var databaseAccessor = client.CreateEphemeralDatabaseAsync();
+        var db = await databaseAccessor.GetAsync();
+        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions { Expiration = DateTimeOffset.MinValue });
+        var orphanContainer = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
 
-        
+        await Task.Delay(10);
 
-        var sut = (await db.GetAsync()).CreateEphemeralContainerAsync(new EphemeralOptions { CleanupBehavior = CleanupBehavior.SelfAndExpired });
+        var sut = db.CreateEphemeralContainerAsync(new EphemeralOptions { CleanupBehavior = CleanupBehavior.SelfAndExpired });
         var container = await sut.GetAsync();
 
         Assert.That(await container.ExistsAsync(), Is.True);
-
-        await Task.Delay(2000);
 
         await sut.DisposeAsync();
 

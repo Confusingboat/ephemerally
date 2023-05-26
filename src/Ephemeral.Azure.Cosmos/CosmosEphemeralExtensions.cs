@@ -1,4 +1,5 @@
 using Microsoft.Azure.Cosmos;
+using System.Diagnostics;
 
 namespace Ephemeral.Azure.Cosmos;
 
@@ -35,21 +36,30 @@ public static class CosmosEphemeralExtensions
             await client.GetDatabase(databaseId).DeleteAsync();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine(ex.ToString());
             return false;
         }
     }
 
-    internal static IAsyncEnumerable<DatabaseProperties> GetExpiredDatabases(this FeedIterator<DatabaseProperties> iterator) =>
+    internal static async Task<IEnumerable<DatabaseProperties>> GetExpiredDatabasesAsync(this CosmosClient client)
+    {
+        using var iterator = client.GetDatabaseQueryIterator<DatabaseProperties>();
+        return await iterator.GetExpiredDatabasesAsync().ToListAsync();
+    }
+
+    internal static IAsyncEnumerable<DatabaseProperties> GetExpiredDatabasesAsync(this FeedIterator<DatabaseProperties> iterator) =>
         iterator
             .ToAsyncEnumerable()
             .SelectResources()
             .Where(IsExpired);
     public static async Task TryCleanupDatabasesAsync(this CosmosClient client)
     {
-        using var iterator = client.GetDatabaseQueryIterator<DatabaseProperties>();
-        await iterator.GetExpiredDatabases().ForEachAwaitAsync(x => client.TryDeleteDatabaseAsync(x.Id));
+        foreach (var db in await client.GetExpiredDatabasesAsync())
+        {
+            await client.TryDeleteDatabaseAsync(db.Id);
+        }
     }
 
     public static async Task<bool> TryDeleteContainerAsync(this Database database, string containerId)
@@ -59,36 +69,37 @@ public static class CosmosEphemeralExtensions
             await database.GetContainer(containerId).DeleteContainerAsync();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine(ex.ToString());
             return false;
         }
     }
 
-    //internal static IAsyncEnumerable<ContainerProperties> GetExpiredContainers(this FeedIterator<ContainerProperties> iterator) =>
-    //    iterator
-    //        .ToAsyncEnumerable()
-    //        .SelectResources()
-    //        .Where(IsExpired);
-
-    internal static async IAsyncEnumerable<ContainerProperties> GetExpiredContainers(
-        this FeedIterator<ContainerProperties> iterator)
+    internal static async Task<IEnumerable<ContainerProperties>> GetExpiredContainersAsync(this Database database)
     {
-        var b = await iterator
+        using var iterator = database.GetContainerQueryIterator<ContainerProperties>();
+        return await iterator.GetExpiredContainersAsync().ToListAsync();
+    }
+
+    internal static IAsyncEnumerable<ContainerProperties> GetExpiredContainersAsync(this FeedIterator<ContainerProperties> iterator) =>
+        iterator
             .ToAsyncEnumerable()
             .SelectResources()
-            .ToListAsync();
-
-
-        foreach (var a in b.Where(IsExpired))
-        {
-            yield return a;
-        }
-    }
+            .Where(IsExpired);
 
     public static async Task TryCleanupContainersAsync(this Database database)
     {
-        using var iterator = database.GetContainerQueryIterator<ContainerProperties>();
-        await iterator.GetExpiredContainers().ForEachAwaitAsync(x => database.TryDeleteContainerAsync(x.Id));
+        foreach (var container in await database.GetExpiredContainersAsync())
+        {
+            await database.TryDeleteContainerAsync(container.Id);
+        }
     }
+
+    internal static IAsyncEnumerable<T> OnEach<T>(this IAsyncEnumerable<T> enumerable, Action<T> action) =>
+        enumerable.Select(x =>
+        {
+            action(x);
+            return x;
+        });
 }

@@ -14,7 +14,7 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
     protected Ephemeral(EphemeralOptions options)
     {
         Options = options;
-        Metadata = EphemeralMetadata.New(options.Name, options.ContainerLifetime);
+        Metadata = EphemeralMetadata.New(options.Name, options.GetExpiration(DateTimeOffset.UtcNow));
         _container = new Lazy<Task<TObject>>(() => EnsureExistsAsync(FullName));
     }
 
