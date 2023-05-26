@@ -10,12 +10,13 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
     private string FullName => _metadata.FullName;
     public DateTimeOffset Expiration => _metadata.Expiration!.Value;
     public IEphemeralMetadata Metadata => _metadata;
+    public bool IsCreated { get; private set; }
 
     protected Ephemeral(EphemeralOptions options)
     {
         _options = options;
         _metadata = EphemeralMetadata.New(options.Name, options.GetExpiration(DateTimeOffset.UtcNow));
-        _object = new Lazy<Task<TObject>>(() => EnsureExistsAsync(FullName));
+        _object = new Lazy<Task<TObject>>(EnsureExistsInternal);
     }
 
     public async ValueTask<TObject> GetAsync()
@@ -25,7 +26,14 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
             return await _object.Value;
         }
 
-        return await EnsureExistsAsync(FullName);
+        return await EnsureExistsInternal();
+    }
+
+    private async Task<TObject> EnsureExistsInternal()
+    {
+        var result = await EnsureExistsAsync(FullName);
+        IsCreated = true;
+        return result;
     }
 
     /// <summary>

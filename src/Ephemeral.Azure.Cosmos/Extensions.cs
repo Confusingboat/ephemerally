@@ -4,18 +4,37 @@ namespace Ephemeral.Azure.Cosmos;
 
 public static class Extensions
 {
-    public static EphemeralCosmosDatabase CreateEphemeralDatabaseAsync(
+    public static async Task<EphemeralCosmosDatabase> CreateEphemeralDatabaseAsync(
+        this CosmosClient client,
+        EphemeralOptions options = default)
+    {
+        var accessor = client.CreateEphemeralDatabaseAccessor(options);
+        await accessor.GetAsync();
+        return accessor;
+    }
+
+    public static EphemeralCosmosDatabase CreateEphemeralDatabaseAccessor(
         this CosmosClient client,
         EphemeralOptions options = default) =>
         new(client, options);
 
-    public static EphemeralCosmosContainer CreateEphemeralContainerAsync(
+    public static async Task<EphemeralCosmosContainer> CreateEphemeralContainerAsync(
+        this Database database,
+        EphemeralOptions options = default,
+        CosmosContainerOptions cosmosContainerOptions = default)
+    {
+        var accessor = database.CreateEphemeralContainerAccessor(options, cosmosContainerOptions);
+        await accessor.GetAsync();
+        return accessor;
+    }
+
+    public static EphemeralCosmosContainer CreateEphemeralContainerAccessor(
         this Database database,
         EphemeralOptions options = default,
         CosmosContainerOptions cosmosContainerOptions = default) =>
         new(database, options, cosmosContainerOptions);
 
-    public static EphemeralCosmosContainer CreateEphemeralContainerAsync(
+    public static EphemeralCosmosContainer CreateEphemeralContainerAccessor(
         this EphemeralCosmosDatabase database,
         EphemeralOptions options = default,
         CosmosContainerOptions cosmosContainerOptions = default) =>
