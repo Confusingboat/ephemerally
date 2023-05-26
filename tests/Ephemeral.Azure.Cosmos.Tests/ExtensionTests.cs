@@ -25,8 +25,8 @@ public class ExtensionTests
         var db = await ephemeral.GetAsync();
 
         // We don't need 'using' here because the containers will be cleaned up by the database
-        var container = db.CreateEphemeralContainerAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMinutes(1) });
-        var container2 = db.CreateEphemeralContainerAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMinutes(1) });
+        var container = db.CreateEphemeralContainerAsync(new EphemeralOptions(TimeSpan.FromMinutes(1)));
+        var container2 = db.CreateEphemeralContainerAsync(new EphemeralOptions(TimeSpan.FromMinutes(1)));
 
         await container.GetAsync();
         await container2.GetAsync();
@@ -43,8 +43,8 @@ public class ExtensionTests
         var db = await ephemeral.GetAsync();
 
         // We don't need 'using' here because the containers will be cleaned up by the database
-        var ephemeralContainer = db.CreateEphemeralContainerAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.Zero });
-        var ephemeralContainer2 = db.CreateEphemeralContainerAsync(new EphemeralOptions { ContainerLifetime = TimeSpan.FromMinutes(1) });
+        var ephemeralContainer = db.CreateEphemeralContainerAsync(new EphemeralOptions(TimeSpan.Zero));
+        var ephemeralContainer2 = db.CreateEphemeralContainerAsync(new EphemeralOptions(TimeSpan.FromMinutes(1)));
 
         var container = await ephemeralContainer.GetAsync();
         var container2 = await ephemeralContainer2.GetAsync();

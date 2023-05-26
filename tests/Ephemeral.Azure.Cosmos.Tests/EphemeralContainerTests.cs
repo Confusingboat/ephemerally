@@ -23,7 +23,7 @@ public class EphemeralContainerTests
         var client = CosmosEmulator.Client;
         await using var databaseAccessor = client.CreateEphemeralDatabaseAsync();
         var db = await databaseAccessor.GetAsync();
-        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions { Expiration = DateTimeOffset.MinValue });
+        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions(DateTimeOffset.MinValue));
         var orphanContainer = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
@@ -47,7 +47,7 @@ public class EphemeralContainerTests
         var client = CosmosEmulator.Client;
         await using var databaseAccessor = client.CreateEphemeralDatabaseAsync();
         var db = await databaseAccessor.GetAsync();
-        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions { Expiration = DateTimeOffset.MaxValue });
+        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions(DateTimeOffset.MaxValue));
         var orphanContainer = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
@@ -69,7 +69,7 @@ public class EphemeralContainerTests
         var client = CosmosEmulator.Client;
         await using var databaseAccessor = client.CreateEphemeralDatabaseAsync();
         var db = await databaseAccessor.GetAsync();
-        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions { Expiration = DateTimeOffset.MinValue });
+        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions(DateTimeOffset.MinValue));
         var orphanContainer = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
@@ -91,7 +91,7 @@ public class EphemeralContainerTests
         var client = CosmosEmulator.Client;
         await using var databaseAccessor = client.CreateEphemeralDatabaseAsync();
         var db = await databaseAccessor.GetAsync();
-        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions { Expiration = DateTimeOffset.MinValue });
+        var orphanAccessor = db.CreateEphemeralContainerAsync(new EphemeralOptions(DateTimeOffset.MinValue));
         var orphanContainer = await orphanAccessor.GetAsync();
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
