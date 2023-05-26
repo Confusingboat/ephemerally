@@ -3,8 +3,8 @@ namespace Ephemeral;
 public interface IEphemeralMetadata
 {
     string FullName { get; }
-    string NamePart { get; init; }
-    string Nonce { get; init; }
-    bool IsEphemeral { get; init; }
-    DateTimeOffset? Expiration { get; init; }
+    string NamePart { get; }
+    string Nonce { get; }
+    bool IsEphemeral { get; }
+    DateTimeOffset? Expiration { get; }
 }

@@ -3,24 +3,24 @@ namespace Ephemeral;
 public abstract class Ephemeral<TObject> : IEphemeral<TObject>
     where TObject : class
 {
+    private readonly EphemeralOptions _options;
+    private readonly EphemeralMetadata _metadata;
     private readonly Lazy<Task<TObject>> _object;
 
-    private string FullName => Metadata.FullName;
-
-    public EphemeralMetadata Metadata { get; }
-
-    private EphemeralOptions Options { get; }
+    private string FullName => _metadata.FullName;
+    public DateTimeOffset Expiration => _metadata.Expiration!.Value;
+    public IEphemeralMetadata Metadata => _metadata;
 
     protected Ephemeral(EphemeralOptions options)
     {
-        Options = options;
-        Metadata = EphemeralMetadata.New(options.Name, options.GetExpiration(DateTimeOffset.UtcNow));
+        _options = options;
+        _metadata = EphemeralMetadata.New(options.Name, options.GetExpiration(DateTimeOffset.UtcNow));
         _object = new Lazy<Task<TObject>>(() => EnsureExistsAsync(FullName));
     }
 
     public async ValueTask<TObject> GetAsync()
     {
-        if (Options.CreationCachingBehavior == CreationCachingBehavior.Cache)
+        if (_options.CreationCachingBehavior == CreationCachingBehavior.Cache)
         {
             return await _object.Value;
         }
@@ -48,10 +48,10 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
 
     public async ValueTask DisposeAsync()
     {
-        if (Options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
+        if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
 
         await CleanupSelfAsync(FullName);
-        if (Options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
+        if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
 
         await CleanupAllAsync();
     }
