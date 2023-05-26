@@ -66,11 +66,26 @@ public static class CosmosEphemeralExtensions
         }
     }
 
-    internal static IAsyncEnumerable<ContainerProperties> GetExpiredContainers(this FeedIterator<ContainerProperties> iterator) =>
-        iterator
+    //internal static IAsyncEnumerable<ContainerProperties> GetExpiredContainers(this FeedIterator<ContainerProperties> iterator) =>
+    //    iterator
+    //        .ToAsyncEnumerable()
+    //        .SelectResources()
+    //        .Where(IsExpired);
+
+    internal static async IAsyncEnumerable<ContainerProperties> GetExpiredContainers(
+        this FeedIterator<ContainerProperties> iterator)
+    {
+        var b = await iterator
             .ToAsyncEnumerable()
             .SelectResources()
-            .Where(IsExpired);
+            .ToListAsync();
+
+
+        foreach (var a in b.Where(IsExpired))
+        {
+            yield return a;
+        }
+    }
 
     public static async Task TryCleanupContainersAsync(this Database database)
     {
