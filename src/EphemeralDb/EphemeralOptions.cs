@@ -9,16 +9,10 @@ namespace EphemeralDb;
 
 public record EphemeralOptions
 {
-    public int ContainerLifetimeSeconds { get; init; }
-    public string Name { get; init; }
-    public CleanupBehavior CleanupBehavior { get; init; }
-    public CreationCachingBehavior CreationCachingBehavior { get; init; }
+    public TimeSpan ContainerLifetime { get; init; } = TimeSpan.FromMinutes(1);
+    public string Name { get; init; } = "Ephemeral";
+    public CleanupBehavior CleanupBehavior { get; init; } = CleanupBehavior.SelfAndExpired;
+    public CreationCachingBehavior CreationCachingBehavior { get; init; } = CreationCachingBehavior.Cache;
 
-    public static EphemeralOptions Default => new()
-    {
-        ContainerLifetimeSeconds = 60,
-        Name = "Ephemeral",
-        CleanupBehavior = CleanupBehavior.SelfAndExpired,
-        CreationCachingBehavior = CreationCachingBehavior.Cache
-    };
+    public static EphemeralOptions Default => new();
 }

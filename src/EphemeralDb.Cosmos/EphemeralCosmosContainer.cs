@@ -9,27 +9,35 @@ namespace EphemeralDb.Cosmos;
 
 public class EphemeralCosmosContainer : Ephemeral<Container>
 {
-    private readonly Database _database;
+    private readonly Func<ValueTask<Database>> _getDatabase;
     private readonly CosmosContainerOptions _cosmosContainerOptions;
 
     public EphemeralCosmosContainer(
-        Database database,
-        EphemeralOptions options,
-        CosmosContainerOptions cosmosContainerOptions) :
-        base(options)
+        Func<ValueTask<Database>> getDatabase,
+        EphemeralOptions options = default,
+        CosmosContainerOptions cosmosContainerOptions = default) :
+        base(options.OrDefault())
     {
-        _database = database;
-        _cosmosContainerOptions = cosmosContainerOptions;
+        _getDatabase = getDatabase;
+        _cosmosContainerOptions = cosmosContainerOptions ?? CosmosContainerOptions.Default;
     }
+
+    public EphemeralCosmosContainer(
+        Database database,
+        EphemeralOptions options = default,
+        CosmosContainerOptions cosmosContainerOptions = default) :
+        this(() => new ValueTask<Database>(database), options, cosmosContainerOptions)
+    { }
+
     protected override async Task<Container> EnsureExistsAsync(string fullName)
     {
         var containerProperties = new ContainerProperties(fullName, _cosmosContainerOptions.PartitionKeyPath);
-        return await _database.CreateContainerIfNotExistsAsync(containerProperties);
+        return await (await _getDatabase()).CreateContainerIfNotExistsAsync(containerProperties);
     }
 
-    protected override Task CleanupSelfAsync(string fullName) =>
-        _database.GetContainer(fullName).DeleteContainerAsync();
+    protected override async Task CleanupSelfAsync(string fullName) =>
+        await (await _getDatabase()).TryDeleteContainerAsync(fullName);
 
-    protected override Task CleanupAllAsync() =>
-        _database.CleanupContainersAsync();
+    protected override async Task CleanupAllAsync() =>
+        await (await _getDatabase()).TryCleanupContainersAsync();
 }

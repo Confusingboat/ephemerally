@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphemeralDb.Nunit.Tests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphemeralDb.Core.Tests", "tests\EphemeralDb.Core.Tests\EphemeralDb.Core.Tests.csproj", "{751D596B-8729-40DB-A172-EF9C55CBDA95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphemeralDb.Cosmos.Tests", "tests\EphemeralDb.Cosmos.Tests\EphemeralDb.Cosmos.Tests.csproj", "{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{751D596B-8729-40DB-A172-EF9C55CBDA95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{751D596B-8729-40DB-A172-EF9C55CBDA95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{751D596B-8729-40DB-A172-EF9C55CBDA95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{4840B7C2-8E4E-489F-8961-68E164B4043F} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{FCB1B882-1FD3-4C54-9205-D9FDF342DD81} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{751D596B-8729-40DB-A172-EF9C55CBDA95} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
+		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5690E595-5302-46D7-AA86-89D55117B068}

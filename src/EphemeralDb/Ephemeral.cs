@@ -5,15 +5,17 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
 {
     private readonly Lazy<Task<TObject>> _container;
 
-    private readonly string _fullName;
+    private string FullName => Metadata.FullName;
+
+    public EphemeralMetadata Metadata { get; }
 
     private EphemeralOptions Options { get; }
 
     protected Ephemeral(EphemeralOptions options)
     {
         Options = options;
-        _fullName = EphemeralMetadata.GetFullName(options.Name, options.ContainerLifetimeSeconds);
-        _container = new Lazy<Task<TObject>>(() => EnsureExistsAsync(_fullName));
+        Metadata = EphemeralMetadata.New(options.Name, options.ContainerLifetime);
+        _container = new Lazy<Task<TObject>>(() => EnsureExistsAsync(FullName));
     }
 
     public async ValueTask<TObject> GetAsync()
@@ -23,7 +25,7 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
             return await _container.Value;
         }
 
-        return await EnsureExistsAsync(_fullName);
+        return await EnsureExistsAsync(FullName);
     }
 
     /// <summary>
@@ -48,7 +50,7 @@ public abstract class Ephemeral<TObject> : IEphemeral<TObject>
     {
         if (Options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
 
-        await CleanupSelfAsync(_fullName);
+        await CleanupSelfAsync(FullName);
         if (Options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
 
         await CleanupAllAsync();

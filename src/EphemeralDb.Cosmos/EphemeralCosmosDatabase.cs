@@ -11,7 +11,7 @@ public class EphemeralCosmosDatabase : Ephemeral<Database>
 {
     private readonly CosmosClient _cosmosClient;
 
-    public EphemeralCosmosDatabase(CosmosClient cosmosClient, EphemeralOptions options) : base(options)
+    public EphemeralCosmosDatabase(CosmosClient cosmosClient, EphemeralOptions options = default) : base(options.OrDefault())
     {
         _cosmosClient = cosmosClient;
     }
@@ -20,8 +20,8 @@ public class EphemeralCosmosDatabase : Ephemeral<Database>
         await _cosmosClient.CreateDatabaseIfNotExistsAsync(fullName);
 
     protected override Task CleanupSelfAsync(string fullName) =>
-        _cosmosClient.GetDatabase(fullName).DeleteAsync();
+        _cosmosClient.TryDeleteDatabaseAsync(fullName);
 
     protected override async Task CleanupAllAsync() =>
-        await _cosmosClient.CleanupDatabasesAsync();
+        await _cosmosClient.TryCleanupDatabasesAsync();
 }
