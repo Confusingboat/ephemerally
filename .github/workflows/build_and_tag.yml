@@ -48,30 +48,10 @@ jobs:
       with:
         ref: v${{ steps.version.outputs.version }}
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6
-        dotnet-quality: ga
-
-    #- run: dotnet tool install --global minver-cli --version 4.3.0
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore
-
   # Cosmos DB Emulator is broken on Ubuntu
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
-  test:
+  build_and_test:
     runs-on: windows-2022
-    needs: build
     # Reenable when Ubuntu is fixed
     # services:
     #   cosmos:
@@ -89,8 +69,17 @@ jobs:
     - name: Start Cosmos DB Emulator
       uses: southpolesteve/cosmos-emulator-github-action@v1
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6
+        dotnet-quality: ga
+
+    - name: Restore dependencies
+      run: dotnet restore
+
     - name: Build
-      run: dotnet build
+      run: dotnet build --no-restore
 
     # Reenable when Ubuntu is fixed
     # - name: Wait for Cosmos Emulator
