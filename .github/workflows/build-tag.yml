@@ -68,7 +68,7 @@ jobs:
       run: dotnet build --no-restore
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     needs: build
     services:
       cosmos:
