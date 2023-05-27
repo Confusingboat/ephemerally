@@ -63,7 +63,7 @@ jobs:
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'tar'
-          filename: '${{ needs.tag.outputs.version }}.tar.gz'
+          filename: '${{ env.artifactdirectory }}/${{ needs.tag.outputs.version }}.tar.gz'
           exclusions: '*.git* /*node_modules/* .editorconfig *.tar.gz'
 
       - run: dotnet pack -c Release -o ${{ env.artifactdirectory }} --include-source --include-symbols
