@@ -66,7 +66,15 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
 
-  tag_and_release:
-    needs: build_and_test
+  tag:
     if: ${{ github.event_name != 'pull_request' }}
-    uses: ./.github/workflows/tag_and_release.yml
+    uses: ./.github/workflows/tag.yml
+
+  release:
+    needs:
+      - tag
+      - build_and_test
+    if: ${{ github.event_name != 'pull_request' }}
+    uses: ./.github/workflows/release.yml
+    with:
+      version: ${{ needs.tag.outputs.version }}
