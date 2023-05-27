@@ -70,7 +70,7 @@ jobs:
   # Cosmos DB Emulator is broken on Ubuntu
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
   test:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: build
     # Reenable when Ubuntu is fixed
     # services:
