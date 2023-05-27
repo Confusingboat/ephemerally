@@ -39,6 +39,10 @@ jobs:
         echo Version: ${{ steps.version.outputs.version }}
         echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
         echo prerelease: ${{ steps.version.outputs.prerelease }}
+    
+    - run: |
+        git tag ${{ steps.version.outputs.version }}
+        git push --tags
 
     # - name: Latest tag
     #   uses: EndBug/latest-tag@v1.5.1
