@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  ArtifactDirectory: ${{ github.workspace }}/artifacts
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - run: dotnet pack -c Release -o ${{ env.ArtifactDirectory }} --include-source --include-symbols
+
+      - name: Echo artifact directory
+        run: |
+          echo ${{ env.ArtifactDirectory }}
+          ls ${{ env.ArtifactDirectory }}
+
+      - name: Create GitHub release
+        id: release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ inputs.version }}
+          prerelease: ${{ contains(inputs.version, '-') }}
+          artifacts: "${{ env.ArtifactDirectory }}/*.nupkg"
+          #bodyFile: "body.md"
+    
