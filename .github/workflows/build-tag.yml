@@ -67,31 +67,39 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
+  # Cosmos DB Emulator is broken on Ubuntu
+  # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
   test:
-    runs-on: ubuntu-18.04
+    runs-on: windows-latest
     needs: build
-    services:
-      cosmos:
-        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
-        ports:
-          - 8081:8081
-          - 10250-10255:10250-10255
-        env:
-          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
-          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
+    # Reenable when Ubuntu is fixed
+    # services:
+    #   cosmos:
+    #     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    #     ports:
+    #       - 8081:8081
+    #       - 10250-10255:10250-10255
+    #     env:
+    #       AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
+    #       AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
     steps:
     - uses: actions/checkout@v2
+
+    # Remove when Ubuntu is fixed
+    - name: Start Cosmos DB Emulator
+      uses: southpolesteve/cosmos-emulator-github-action@v1
 
     - name: Build
       run: dotnet build
 
-    - name: Wait for Cosmos Emulator
-      uses: cygnetdigital/wait_for_response@v2.0.0
-      with:
-        url: 'https://localhost:8081/_explorer/index.html'
-        responseCode: '200,500'
-        timeout: 5000
-        interval: 500
+    # Reenable when Ubuntu is fixed
+    # - name: Wait for Cosmos Emulator
+    #   uses: cygnetdigital/wait_for_response@v2.0.0
+    #   with:
+    #     url: 'https://localhost:8081/_explorer/index.html'
+    #     responseCode: '200,500'
+    #     timeout: 5000
+    #     interval: 500
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
