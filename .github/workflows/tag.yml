@@ -41,7 +41,7 @@ jobs:
         echo prerelease: ${{ steps.version.outputs.prerelease }}
     
     - run: |
-        git tag ${{ steps.version.outputs.version }}
+        git tag v${{ steps.version.outputs.version }}
         git push --tags
 
     # - name: Latest tag
