@@ -8,6 +8,7 @@ on:
         type: string
 
 env:
+  MINVERSIONOVERRIDE: ${{ inputs.version }}
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   ArtifactDirectory: ${{ github.workspace }}/artifacts
@@ -37,7 +38,7 @@ jobs:
         id: release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ inputs.version }}
+          tag: v${{ inputs.version }}
           prerelease: ${{ contains(inputs.version, '-') }}
           artifacts: "${{ env.ArtifactDirectory }}/*.nupkg"
           #bodyFile: "body.md"
