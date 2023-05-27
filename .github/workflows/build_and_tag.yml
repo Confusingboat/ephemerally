@@ -111,15 +111,15 @@ jobs:
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'tar'
-          filename: '${{ tag.version }}.tar.gz'
+          filename: '${{ needs.tag.outputs.version }}.tar.gz'
           exclusions: '*.git* /*node_modules/* .editorconfig'
 
-      - run: dotnet pack -c Release -o ${{ artifactdirectory }} --include-source --include-symbols
+      - run: dotnet pack -c Release -o ${{ env.artifactdirectory }} --include-source --include-symbols
 
       - name: Create GitHub release
         id: release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ artifactdirectory }}/*"
+          artifacts: "${{ env.artifactdirectory }}/*"
           #bodyFile: "body.md"
     
