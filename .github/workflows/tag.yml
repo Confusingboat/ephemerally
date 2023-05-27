@@ -8,6 +8,7 @@ on:
         value: ${{ jobs.tag.outputs.version }}
 
 env:
+  MinVerIgnoreHeight: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
 
