@@ -41,6 +41,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ inputs.version }}
+          prerelease: contains('-', ${{ inputs.version }})
           artifacts: "${{ env.artifactdirectory }}/*"
           #bodyFile: "body.md"
     

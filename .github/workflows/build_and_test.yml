@@ -78,4 +78,3 @@ jobs:
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
-      prerelease: contains('-', ${{ needs.tag.outputs.version }})
