@@ -8,7 +8,7 @@ on:
         type: string
 
 env:
-  MINVERSIONOVERRIDE: ${{ inputs.version }}
+  MinVerVersionOverride: ${{ inputs.version }}
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   ArtifactDirectory: ${{ github.workspace }}/artifacts
@@ -27,6 +27,7 @@ jobs:
         with:
           fetch-depth: 0
 
+      # /p:MinVerVersionOverride=${{ inputs.version }}
       - run: dotnet pack -c Release -o ${{ env.ArtifactDirectory }} --include-source --include-symbols
 
       - name: Echo artifact directory
