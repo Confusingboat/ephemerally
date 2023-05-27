@@ -45,8 +45,10 @@ jobs:
         git tag v${{ steps.version.outputs.version }}
         git push --tags
 
-    # - name: Latest tag
-    #   uses: EndBug/latest-tag@v1.5.1
+    # Update latest tag on main branch
+    - name: Latest tag
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: EndBug/latest-tag@v1.5.1
 
     # - name: Version tag
     #   uses: EndBug/latest-tag@v1.5.1
