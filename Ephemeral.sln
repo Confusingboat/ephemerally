@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemeral", "src\Ephemeral\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemeral.Azure.Cosmos", "src\Ephemeral.Azure.Cosmos\Ephemeral.Azure.Cosmos.csproj", "{0DC573DD-DB25-4D78-BD8B-8D2839196BB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphemeralDb.Xunit", "src\Ephemeral.Azure.Cosmos.Xunit\EphemeralDb.Xunit.csproj", "{2C2F96A8-BB10-40C6-9F1D-D6CD0EAEBAEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemeral.Azure.Cosmos.Xunit", "src\Ephemeral.Azure.Cosmos.Xunit\Ephemeral.Azure.Cosmos.Xunit.csproj", "{2C2F96A8-BB10-40C6-9F1D-D6CD0EAEBAEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F9102409-3748-4DA6-9D7B-784339508244}"
 EndProject
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemeral.Tests", "tests\Ep
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemeral.Azure.Cosmos.Tests", "tests\Ephemeral.Azure.Cosmos.Tests\Ephemeral.Azure.Cosmos.Tests.csproj", "{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ephemeral.Azure", "src\Ephemeral.Azure\Ephemeral.Azure.csproj", "{B99D5934-DD84-4709-95F8-90F795D66747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemeral.Azure", "src\Ephemeral.Azure\Ephemeral.Azure.csproj", "{B99D5934-DD84-4709-95F8-90F795D66747}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

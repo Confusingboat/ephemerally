@@ -1,9 +1,8 @@
-using Ephemeral;
 using Ephemeral.Azure.Cosmos;
 using Microsoft.Azure.Cosmos;
 using Xunit;
 
-namespace EphemeralDb.Xunit;
+namespace Ephemeral.Xunit;
 
 internal abstract class EphemeralCosmosContainerFixture :
     IAsyncDisposable,
