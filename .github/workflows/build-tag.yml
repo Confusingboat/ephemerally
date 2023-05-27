@@ -45,9 +45,9 @@ jobs:
     needs: build
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Test
-      run: dotnet test test/Ephemeral.sln --verbosity normal
+      run: dotnet test --verbosity normal
 
   tag:
     runs-on: ubuntu-latest
