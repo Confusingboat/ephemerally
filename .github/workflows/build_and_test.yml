@@ -39,6 +39,7 @@ jobs:
 
     # Remove when Ubuntu is fixed
     - name: Start Cosmos DB Emulator
+      if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       uses: southpolesteve/cosmos-emulator-github-action@v1
 
     - name: Setup .NET
@@ -63,6 +64,7 @@ jobs:
     #     interval: 500
 
     - name: Test
+      if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       run: dotnet test --no-build --verbosity normal
 
   tag:
