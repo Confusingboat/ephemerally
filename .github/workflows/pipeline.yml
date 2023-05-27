@@ -1,0 +1,74 @@
+name: Tag & Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  NuGetDirectory: ${{ github.workspace}}/nuget
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6
+        dotnet-quality: ga
+
+    - run: dotnet tool install --global minver-cli --version 4.3.0
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: action-minver-refreshed
+      id: version
+      uses: Stelzi79/action-minver@3.0.1
+      with:
+        minver-version: 4.3.0
+
+    - name: echo version #version major minor patch prerelease
+      run: |
+        echo Version: ${{ steps.version.outputs.version }}
+        echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
+        echo prerelease: ${{ steps.version.outputs.prerelease }}
+
+    - name: Tag Repo
+      uses: richardsimko/update-tag@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
