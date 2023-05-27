@@ -1,0 +1,31 @@
+name: Publish Nuget
+
+on:
+  release:
+    types:
+      [published]
+  
+
+env:
+  MinVerVersionOverride: ${{ inputs.version }}
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  ArtifactDirectory: ${{ github.workspace }}/artifacts
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: ${{ github.ref }}
+          regex: true
+          file: ".*\\.nupkg"
+          target: ${{ env.ArtifactDirectory }}
+
+      - run: dotnet nuget push "${{ env.ArtifactDirectory }}/*.nupkg" -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+    

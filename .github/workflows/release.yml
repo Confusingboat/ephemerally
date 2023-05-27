@@ -28,7 +28,13 @@ jobs:
           fetch-depth: 0
 
       # /p:MinVerVersionOverride=${{ inputs.version }}
-      - run: dotnet pack -c Release -o ${{ env.ArtifactDirectory }} --include-source --include-symbols
+      - run: |
+          dotnet pack \
+          -c Release \
+          -o ${{ env.ArtifactDirectory }} \
+          /p:RepositoryUrl="${{ github.server_url }}/${{ github.repository }}" \
+          /p:Authors=${{ github.repository_owner }}
+        #--include-source --include-symbols
 
       - name: Echo artifact directory
         run: |
