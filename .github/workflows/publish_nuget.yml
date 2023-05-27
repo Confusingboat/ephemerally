@@ -7,7 +7,6 @@ on:
   
 
 env:
-  MinVerVersionOverride: ${{ inputs.version }}
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   ArtifactDirectory: ${{ github.workspace }}/artifacts
@@ -27,5 +26,9 @@ jobs:
           file: ".*\\.nupkg"
           target: ${{ env.ArtifactDirectory }}
 
-      - run: dotnet nuget push "${{ env.ArtifactDirectory }}/*.nupkg" -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+      - run: |
+          dotnet `
+          nuget `
+          push "${{ env.ArtifactDirectory }}/*.nupkg" `
+          -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
     
