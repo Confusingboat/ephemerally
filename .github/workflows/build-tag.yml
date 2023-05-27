@@ -43,6 +43,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: build
+    services:
+      cosmos:
+        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+        ports:
+          - 8081:8081
+        env:
+          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 10
     steps:
     - uses: actions/checkout@v2
 
