@@ -30,6 +30,7 @@ jobs:
       uses: Stelzi79/action-minver@3.0.1
       with:
         minver-version: 4.3.0
+        auto-increment: patch
         default-pre-release-phase: preview
 
     - name: echo version #version major minor patch prerelease
