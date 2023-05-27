@@ -26,14 +26,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: dotnet pack -c Release -o ${{ env.artifactdirectory }} --include-source --include-symbols
+      - run: dotnet pack -c Release -o ${{ env.ArtifactDirectory }} --include-source --include-symbols
+
+      - name: Echo artifact directory
+        run: |
+          echo ${{ env.ArtifactDirectory }}
+          ls ${{ env.ArtifactDirectory }}
 
       - name: Create GitHub release
         id: release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ inputs.version }}
-          prerelease: contains('-', ${{ inputs.version }})
-          artifacts: "${{ env.artifactdirectory }}/*"
+          prerelease: contains(${{ inputs.version }}, '-')
+          artifacts: "${{ env.ArtifactDirectory }}/*.nupkg"
           #bodyFile: "body.md"
     
