@@ -3,10 +3,8 @@ name: Build & Test
 on:
   workflow_dispatch:
   push:
-    tags:
-      - '*'
     branches:
-      - '*'
+      - 'main'
   pull_request:
     branches:
       - '*'
