@@ -38,7 +38,7 @@ jobs:
         id: release
         uses: ncipollo/release-action@v1
         with:
-          tag: v${{ inputs.version }}
+          tag: ${{ inputs.version }}
           prerelease: ${{ contains(inputs.version, '-') }}
           artifacts: "${{ env.ArtifactDirectory }}/*.nupkg"
           #bodyFile: "body.md"
