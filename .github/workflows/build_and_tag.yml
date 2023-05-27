@@ -14,7 +14,7 @@ on:
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
-  NuGetDirectory: ${{ github.workspace}}/nuget
+  ArtifactDirectory: ${{ github.workspace}}/artifacts
 
 defaults:
   run:
@@ -23,6 +23,8 @@ defaults:
 jobs:
   tag:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -95,16 +97,29 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs:
       - tag
       - build_and_test
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'tar'
+          filename: '${{ tag.version }}.tar.gz'
+          exclusions: '*.git* /*node_modules/* .editorconfig'
+
+      - run: dotnet pack -c Release -o ${{ artifactdirectory }} --include-source --include-symbols
+
       - name: Create GitHub release
         id: release
-        uses: Roang-zero1/github-create-release-action@v3
+        uses: ncipollo/release-action@v1
         with:
-          created_tag: ${{ tag.steps.version.outputs.version }}
-          version_regex: ^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
-          prerelease_regex: ^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ artifactdirectory }}/*"
+          #bodyFile: "body.md"
+    
