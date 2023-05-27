@@ -61,6 +61,7 @@ jobs:
 
       - name: Archive Release
         uses: thedoctor0/zip-release@0.7.1
+        if: false
         with:
           type: 'tar'
           filename: '${{ env.artifactdirectory }}/${{ needs.tag.outputs.version }}.tar.gz'
