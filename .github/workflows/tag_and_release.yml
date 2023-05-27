@@ -2,7 +2,7 @@ name: Tag & Release
 
 on:
   workflow_call:
-  workflow_dispatch:
+  # workflow_dispatch:
   # push:
   #   tags:
   #     - '*'
@@ -12,7 +12,7 @@ on:
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
-  ArtifactDirectory: ${{ github.workspace}}/artifacts
+  ArtifactDirectory: ${{ github.workspace }}/artifacts
 
 defaults:
   run:
@@ -64,7 +64,7 @@ jobs:
         with:
           type: 'tar'
           filename: '${{ needs.tag.outputs.version }}.tar.gz'
-          exclusions: '*.git* /*node_modules/* .editorconfig'
+          exclusions: '*.git* /*node_modules/* .editorconfig *.tar.gz'
 
       - run: dotnet pack -c Release -o ${{ env.artifactdirectory }} --include-source --include-symbols
 
