@@ -48,13 +48,18 @@ jobs:
         image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
         ports:
           - 8081:8081
+          - 10250-10255:10250-10255
         env:
-          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 10
+          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
+          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
     steps:
     - uses: actions/checkout@v2
 
+    - name: Build
+      run: dotnet build
+
     - name: Test
-      run: dotnet test --verbosity normal
+      run: dotnet test --no-build --verbosity normal
 
   tag:
     runs-on: ubuntu-latest
