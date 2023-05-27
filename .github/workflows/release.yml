@@ -29,10 +29,10 @@ jobs:
 
       # /p:MinVerVersionOverride=${{ inputs.version }}
       - run: |
-          dotnet pack \
-          -c Release \
-          -o ${{ env.ArtifactDirectory }} \
-          /p:RepositoryUrl="${{ github.server_url }}/${{ github.repository }}" \
+          dotnet pack `
+          -c Release `
+          -o ${{ env.ArtifactDirectory }} `
+          /p:RepositoryUrl="${{ github.server_url }}/${{ github.repository }}" `
           /p:Authors=${{ github.repository_owner }}
         #--include-source --include-symbols
 
