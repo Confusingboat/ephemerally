@@ -2,8 +2,8 @@
 
 public interface IEphemeral : IAsyncDisposable { }
 
-public interface IEphemeral<TContainer> : IEphemeral
-    where TContainer : class
+public interface IEphemeral<out TObject> : IEphemeral
+    where TObject : class
 {
-    ValueTask<TContainer> GetAsync();
+    TObject Value { get; }
 }

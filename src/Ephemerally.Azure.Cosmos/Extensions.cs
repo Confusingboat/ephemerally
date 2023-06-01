@@ -4,41 +4,32 @@ namespace Ephemerally.Azure.Cosmos;
 
 public static class Extensions
 {
+    public static EphemeralCosmosDatabase ToEphemeral(this Database database, EphemeralOptions options = default) =>
+        new(new CosmosDatabaseEphemeral(database, options));
+
+    public static EphemeralCosmosContainer ToEphemeral(this Container container, EphemeralOptions options = default) =>
+        new(new CosmosContainerEphemeral(container, options));
+
     public static async Task<EphemeralCosmosDatabase> CreateEphemeralDatabaseAsync(
         this CosmosClient client,
-        EphemeralOptions options = default)
+        EphemeralCreationOptions options = default)
     {
-        var accessor = client.CreateEphemeralDatabaseAccessor(options);
-        await accessor.GetAsync();
-        return accessor;
+        var metadata = options.OrDefault().GetNewMetadata();
+        var response = await client.CreateDatabaseIfNotExistsAsync(metadata.FullName);
+        return client.GetDatabase(response.Resource.Id).ToEphemeral(options);
     }
-
-    public static EphemeralCosmosDatabase CreateEphemeralDatabaseAccessor(
-        this CosmosClient client,
-        EphemeralOptions options = default) =>
-        new(client, options);
 
     public static async Task<EphemeralCosmosContainer> CreateEphemeralContainerAsync(
         this Database database,
-        EphemeralOptions options = default,
-        CosmosContainerOptions cosmosContainerOptions = default)
+        EphemeralCreationOptions options = default,
+        ContainerProperties containerProperties = default,
+        ThroughputProperties throughputProperties = default)
     {
-        var accessor = database.CreateEphemeralContainerAccessor(options, cosmosContainerOptions);
-        await accessor.GetAsync();
-        return accessor;
+        var metadata = options.OrDefault().GetNewMetadata();
+        containerProperties ??= new ContainerProperties(metadata.FullName, "/id");
+        var response = await database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties);
+        return database.GetContainer(response.Resource.Id).ToEphemeral(options);
     }
-
-    public static EphemeralCosmosContainer CreateEphemeralContainerAccessor(
-        this Database database,
-        EphemeralOptions options = default,
-        CosmosContainerOptions cosmosContainerOptions = default) =>
-        new(database, options, cosmosContainerOptions);
-
-    public static EphemeralCosmosContainer CreateEphemeralContainerAccessor(
-        this EphemeralCosmosDatabase database,
-        EphemeralOptions options = default,
-        CosmosContainerOptions cosmosContainerOptions = default) =>
-        new(database.GetAsync, options, cosmosContainerOptions);
 
     public static async Task<bool> ExistsAsync(this Database database) =>
         await database.Client.DatabaseExistsAsync(database.Id);

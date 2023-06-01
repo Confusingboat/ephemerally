@@ -7,25 +7,21 @@ internal abstract class EphemeralCosmosContainerFixture :
     IAsyncDisposable,
     IAsyncLifetime
 {
-    private readonly EphemeralCosmosContainer _container;
+    private Lazy<ValueTask<EphemeralCosmosContainer>> _container;
 
     protected EphemeralCosmosContainerFixture(
         Database database,
-        EphemeralOptions options,
-        CosmosContainerOptions cosmosContainerOptions = default)
+        EphemeralCreationOptions options)
     {
-        _container = new(
-            database,
-            options ?? EphemeralOptions.Default,
-            cosmosContainerOptions ?? CosmosContainerOptions.Default);
+        _container = new(async () => await database.CreateEphemeralContainerAsync(options));
     }
 
     async Task IAsyncLifetime.InitializeAsync() =>
-        await _container.GetAsync();
+        await _container.Value;
 
     async Task IAsyncLifetime.DisposeAsync() =>
         await ((IAsyncDisposable)this).DisposeAsync();
 
     ValueTask IAsyncDisposable.DisposeAsync() =>
-        _container.DisposeAsync();
+        _container.Value.Result.DisposeAsync();
 }
