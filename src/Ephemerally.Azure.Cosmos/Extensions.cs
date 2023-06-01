@@ -15,7 +15,7 @@ public static class Extensions
         EphemeralCreationOptions options = default)
     {
         var metadata = options.OrDefault().GetNewMetadata();
-        var response = await client.CreateDatabaseIfNotExistsAsync(metadata.FullName);
+        var response = await client.CreateDatabaseIfNotExistsAsync(metadata.FullName).ConfigureAwait(false);
         return client.GetDatabase(response.Resource.Id).ToEphemeral(options);
     }
 
@@ -27,12 +27,12 @@ public static class Extensions
     {
         var metadata = options.OrDefault().GetNewMetadata();
         containerProperties ??= new ContainerProperties(metadata.FullName, "/id");
-        var response = await database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties);
+        var response = await database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties).ConfigureAwait(false);
         return database.GetContainer(response.Resource.Id).ToEphemeral(options);
     }
 
     public static async Task<bool> ExistsAsync(this Database database) =>
-        await database.Client.DatabaseExistsAsync(database.Id);
+        await database.Client.DatabaseExistsAsync(database.Id).ConfigureAwait(false);
 
     public static async Task<bool> DatabaseExistsAsync(this CosmosClient client, string databaseId)
     {
@@ -41,11 +41,11 @@ public static class Extensions
 
         return await client.GetDatabaseQueryIterator<object>(query)
             .ToAsyncEnumerable()
-            .AnyAsync(x => x.Resource.Any());
+            .AnyAsync(x => x.Resource.Any()).ConfigureAwait(false);
     }
 
     public static async Task<bool> ExistsAsync(this Container container) => 
-        await container.Database.ContainerExistsAsync(container.Id);
+        await container.Database.ContainerExistsAsync(container.Id).ConfigureAwait(false);
     public static async Task<bool> ContainerExistsAsync(this Database database, string containerId)
     {
         var query = new QueryDefinition("select * from c where c.id = @containerId")
@@ -53,14 +53,14 @@ public static class Extensions
 
         return await database.GetContainerQueryIterator<object>(query)
             .ToAsyncEnumerable()
-            .AnyAsync(x => x.Resource.Any());
+            .AnyAsync(x => x.Resource.Any()).ConfigureAwait(false);
     }
 
     public static async IAsyncEnumerable<FeedResponse<T>> ToAsyncEnumerable<T>(this FeedIterator<T> iterator)
     {
         while (iterator.HasMoreResults)
         {
-            yield return await iterator.ReadNextAsync();
+            yield return await iterator.ReadNextAsync().ConfigureAwait(false);
         }
     }
 

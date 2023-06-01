@@ -37,9 +37,9 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     {
         if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
 
-        await CleanupSelfAsync(FullName).F();
+        await CleanupSelfAsync(FullName).ConfigureAwait(false);
         if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
 
-        await CleanupAllAsync().F();
+        await CleanupAllAsync().ConfigureAwait(false);
     }
 }
