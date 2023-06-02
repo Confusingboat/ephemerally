@@ -5,16 +5,16 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     private const string PrefixValue = "E";
 
     public string FullName { get; } = string.Empty;
-    public string NamePart { get; init; }
-    public string Nonce { get; init; }
-    public bool IsEphemeral { get; init; }
-    public DateTimeOffset? Expiration { get; init; }
+    public string NamePart { get; internal init; }
+    public string Nonce { get; internal init; }
+    public bool IsEphemeral { get; internal init; }
+    public DateTimeOffset? Expiration { get; internal init; }
 
     /// <summary>
     /// Non-ephemeral constructor
     /// </summary>
     /// <param name="fullName"></param>
-    internal EphemeralMetadata(string fullName)
+    private EphemeralMetadata(string fullName)
     {
         FullName = fullName;
     }
@@ -25,7 +25,7 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     /// <param name="expiration"></param>
     /// <param name="nonce"></param>
     /// <param name="friendlyName"></param>
-    internal EphemeralMetadata(
+    private EphemeralMetadata(
         DateTimeOffset expiration,
         string nonce,
         string friendlyName)
