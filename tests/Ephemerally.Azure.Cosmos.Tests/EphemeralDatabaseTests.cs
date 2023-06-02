@@ -16,6 +16,22 @@ public class EphemeralDatabaseTests
     }
 
     [Test]
+    public async Task User_supplied_database_should_be_torn_down()
+    {
+        var client = CosmosEmulator.Client;
+
+        var userSuppliedDatabase = (await client.CreateDatabaseAsync("user-supplied-database")).Database;
+
+        Assert.That(await userSuppliedDatabase.ExistsAsync(), Is.True);
+
+        var sut = userSuppliedDatabase.ToEphemeral();
+
+        await sut.DisposeAsync();
+
+        Assert.That(await sut.ExistsAsync(), Is.False);
+    }
+
+    [Test]
     public async Task CleanupBehavior_SelfAndExpired_should_remove_self_and_expired_orphaned_database()
     {
         var client = CosmosEmulator.Client;

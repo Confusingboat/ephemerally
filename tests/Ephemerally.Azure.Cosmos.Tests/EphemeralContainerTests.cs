@@ -17,6 +17,23 @@ public class EphemeralContainerTests
     }
 
     [Test]
+    public async Task User_supplied_container_should_be_torn_down()
+    {
+        var client = CosmosEmulator.Client;
+        await using var db = await client.CreateEphemeralDatabaseAsync();
+
+        var userSuppliedContainer = (await db.CreateContainerAsync("user-supplied-container", "/id")).Container;
+
+        Assert.That(await userSuppliedContainer.ExistsAsync(), Is.True);
+
+        var sut = userSuppliedContainer.ToEphemeral();
+
+        await sut.DisposeAsync();
+
+        Assert.That(await sut.ExistsAsync(), Is.False);
+    }
+
+    [Test]
     public async Task CleanupBehavior_SelfAndExpired_should_remove_self_and_expired_orphaned_container()
     {
         var client = CosmosEmulator.Client;
