@@ -27,10 +27,6 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
 
-# defaults:
-#   run:
-#     shell: pwsh
-
 jobs:
   tag:
     runs-on: ubuntu-latest
@@ -88,5 +84,3 @@ jobs:
     #   uses: EndBug/latest-tag@v1.5.1
     #   with:
     #     ref: v${{ steps.version.outputs.version }}
-
-    # Let's pretend this was a meaningful change
