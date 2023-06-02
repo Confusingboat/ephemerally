@@ -36,6 +36,13 @@ jobs:
           --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - run: |
+          dotnet nuget add source `
+          --username USERNAME `
+          --password ${{ secrets.NUGET_ORG_API_KEY }} `
+          --store-password-in-clear-text `
+          --name nuget "https://api.nuget.org/v3/index.json"
+
+      - run: |
           dotnet pack `
           -c Release `
           -o ${{ env.ArtifactDirectory }} `

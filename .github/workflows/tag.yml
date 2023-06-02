@@ -6,6 +6,18 @@ on:
       version:
         description: "Generated version"
         value: ${{ jobs.tag.outputs.version }}
+      major:
+        description: "Generated major version"
+        value: ${{ jobs.tag.outputs.major }}
+      minor:
+        description: "Generated minor version"
+        value: ${{ jobs.tag.outputs.minor }}
+      patch:
+        description: "Generated patch version"
+        value: ${{ jobs.tag.outputs.patch }}
+      prerelease:
+        description: "Generated prerelease version"
+        value: ${{ jobs.tag.outputs.prerelease }}
 
 env:
   #MinVerIgnoreHeight: true
@@ -21,6 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      major: ${{ steps.version.outputs.major }}
+      minor: ${{ steps.version.outputs.minor }}
+      patch: ${{ steps.version.outputs.patch }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -45,9 +61,14 @@ jobs:
     #     git tag v${{ steps.version.outputs.version }}
     #     git push --tags
 
-    # Update latest tag on main branch
-    - name: Latest tag
+    # Update unstable tag on main branch
+    - name: unstable tag
       if: ${{ github.ref == 'refs/heads/main' }}
+      uses: EndBug/latest-tag@v1.5.1
+
+    # Update latest tag on main branch when tagged RTM
+    - name: latest tag
+      if: ${{ github.ref == 'refs/heads/main' && steps.version.outputs.prerelease == '' }}
       uses: EndBug/latest-tag@v1.5.1
 
     # - name: Version tag
