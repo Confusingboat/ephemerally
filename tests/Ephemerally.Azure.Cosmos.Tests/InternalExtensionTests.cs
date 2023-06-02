@@ -36,8 +36,6 @@ public class InternalExtensionTests
         Assert.That(await container.ExistsAsync(), Is.True);
         Assert.That(await container2.ExistsAsync(), Is.True);
 
-        await Task.Delay(100);
-
         var expiredContainers = await db.GetExpiredContainersAsync();
 
         Assert.That(expiredContainers, Has.One.Items);

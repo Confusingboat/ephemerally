@@ -43,8 +43,6 @@ public class EphemeralContainerTests
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
 
-        await Task.Delay(10);
-
         var sut = await db.CreateEphemeralContainerAsync(new EphemeralCreationOptions { CleanupBehavior = CleanupBehavior.SelfAndExpired });
 
         Assert.That(await sut.ExistsAsync(), Is.True);
