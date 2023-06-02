@@ -31,7 +31,7 @@ public async Task Test_should_pass()
     await using var database = await client.CreateEphemeralDatabaseAsync();
 
     // Now let's create a container
-    await using var container = await database.CreateEphemeralContainerAccessor();
+    await using var container = await database.CreateEphemeralContainerAsync();
 
     // You can even bring your own database or container to clean up automatically
     database.GetContainer("myCoolContainer").ToEphemeral();
