@@ -25,7 +25,7 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     /// In an overridden implementation, this method should delete the TObject.
     /// </summary>
     /// <returns></returns>
-    protected abstract Task CleanupSelfAsync(string fullName);
+    protected abstract Task CleanupSelfAsync();
 
     /// <summary>
     /// In an overridden implementation, this method should delete all expired TObject.
@@ -37,7 +37,7 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     {
         if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
 
-        await CleanupSelfAsync(FullName).ConfigureAwait(false);
+        await CleanupSelfAsync().ConfigureAwait(false);
         if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
 
         await CleanupAllAsync().ConfigureAwait(false);

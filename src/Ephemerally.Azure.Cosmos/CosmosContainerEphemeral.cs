@@ -10,8 +10,8 @@ public class CosmosContainerEphemeral : Ephemeral<Container>
         base(container, x => x.Id, options.OrDefault())
     { }
 
-    protected override Task CleanupSelfAsync(string fullName) =>
-        Value.Database.TryDeleteContainerAsync(fullName);
+    protected override Task CleanupSelfAsync() =>
+        Value.Database.TryDeleteContainerAsync(Metadata.FullName);
 
     protected override Task CleanupAllAsync() =>
         Value.Database.TryCleanupContainersAsync();

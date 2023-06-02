@@ -10,8 +10,8 @@ public class CosmosDatabaseEphemeral : Ephemeral<Database>
         : base(database, x => x.Id, options.OrDefault())
     { }
 
-    protected override Task CleanupSelfAsync(string fullName) =>
-        Value.Client.TryDeleteDatabaseAsync(fullName);
+    protected override Task CleanupSelfAsync() =>
+        Value.Client.TryDeleteDatabaseAsync(Metadata.FullName);
 
     protected override Task CleanupAllAsync() =>
         Value.Client.TryCleanupDatabasesAsync();

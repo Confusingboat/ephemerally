@@ -13,4 +13,7 @@ public static class PublicExtensions
 
     public static IEphemeralMetadata GetContainerMetadata(this string fullName) =>
         EphemeralMetadata.New(fullName);
+
+    public static IEphemeral<T> ToEphemeral<T>(this T value,
+        Func<Task> cleanupSelfAsync) where T : class => new SingleEphemeral<T>(value, cleanupSelfAsync);
 }
