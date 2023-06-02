@@ -81,3 +81,4 @@ jobs:
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
+    secrets: inherit

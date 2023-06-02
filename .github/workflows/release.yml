@@ -6,7 +6,9 @@ on:
       version:
         required: true
         type: string
-
+    secrets:
+      NUGET_ORG_API_KEY:
+        required: true
 env:
   MinVerVersionOverride: ${{ inputs.version }}
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
