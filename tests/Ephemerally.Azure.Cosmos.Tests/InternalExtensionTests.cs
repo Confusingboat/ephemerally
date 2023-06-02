@@ -1,6 +1,6 @@
 ﻿namespace Ephemerally.Azure.Cosmos.Tests;
 
-public class ExtensionTests
+public class InternalExtensionTests
 {
     [Test]
     public async Task GetExpiredContainersAsync_should_return_empty_when_no_containers_present()
