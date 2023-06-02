@@ -5,6 +5,9 @@ namespace Ephemerally.Azure.Cosmos;
 
 internal static class InternalExtensions
 {
+    internal static T OrDefault<T>(this T options) where T : EphemeralOptions, new() =>
+        options ?? new T();
+
     internal static async Task<bool> ExistsAsync(this Database database) =>
         await database.Client.DatabaseExistsAsync(database.Id).ConfigureAwait(false);
 

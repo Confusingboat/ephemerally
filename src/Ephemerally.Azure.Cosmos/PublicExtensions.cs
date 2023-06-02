@@ -33,15 +33,15 @@ public static class PublicExtensions
         return database.GetContainer(response.Resource.Id).ToEphemeral(options);
     }
 
-    public static EphemeralMetadata GetEphemeralMetadata(this DatabaseProperties container) =>
+    public static IEphemeralMetadata GetEphemeralMetadata(this DatabaseProperties container) =>
         container.Id.GetContainerMetadata();
     
-    public static EphemeralMetadata GetEphemeralMetadata(this Database container) =>
+    public static IEphemeralMetadata GetEphemeralMetadata(this Database container) =>
         container.Id.GetContainerMetadata();
 
-    public static EphemeralMetadata GetEphemeralMetadata(this ContainerProperties container) =>
+    public static IEphemeralMetadata GetEphemeralMetadata(this ContainerProperties container) =>
         container.Id.GetContainerMetadata();
 
-    public static EphemeralMetadata GetEphemeralMetadata(this Container container) =>
+    public static IEphemeralMetadata GetEphemeralMetadata(this Container container) =>
         container.Id.GetContainerMetadata();
 }

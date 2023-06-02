@@ -18,6 +18,6 @@ public class EphemeralMetadataTests
             Nonce = "ABCDEF"
         };
 
-        return metadata.IsExpired(DateTimeOffset.FromUnixTimeSeconds(now));
+        return metadata.IsExpiredAsOf(DateTimeOffset.FromUnixTimeSeconds(now));
     }
 }
