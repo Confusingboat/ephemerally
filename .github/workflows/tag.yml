@@ -18,6 +18,9 @@ on:
       prerelease:
         description: "Generated prerelease version"
         value: ${{ jobs.tag.outputs.prerelease }}
+      prerelease-depth:
+        description: "Number of periods in the prerelease version"
+        value: ${{ jobs.tag.outputs.prerelease-depth }}
 
 env:
   #MinVerIgnoreHeight: true
@@ -37,6 +40,7 @@ jobs:
       minor: ${{ steps.version.outputs.minor }}
       patch: ${{ steps.version.outputs.patch }}
       prerelease: ${{ steps.version.outputs.prerelease }}
+      prerelease-depth: ${{ steps.determine-releasability.outputs.pre-release-depth }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -56,6 +60,11 @@ jobs:
         echo Version: ${{ steps.version.outputs.version }}
         echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
         echo prerelease: ${{ steps.version.outputs.prerelease }}
+    
+    - name: determine releasability
+      id: determine-releasability
+      run: |
+        echo "prerelease-depth=$(echo '${{ steps.version.outputs.prerelease }}' | tr -cd '.' | wc -c | tr -d ' ')" >> "$GITHUB_OUTPUT"
     
     # - run: |
     #     git tag v${{ steps.version.outputs.version }}
