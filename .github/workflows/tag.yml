@@ -64,9 +64,9 @@ jobs:
     - name: determine releasability
       id: determine-releasability
       run: |
-        echo "prerelease-depth=$(echo '${{ steps.version.outputs.prerelease }}' | tr -cd '.' | wc -c | tr -d ' ')" >> "$GITHUB_OUTPUT"
+        echo "prerelease-depth=$(echo '${{ steps.version.outputs.prerelease }}' | tr -cd '.' | wc -c | tr -d ' ')" >> $GITHUB_OUTPUT
 
-    - run: echo ""${{ steps.determine-releasability.outputs.prerelease-depth }}""
+    - run: echo "${{ steps.determine-releasability.outputs.prerelease-depth }}"
     
     # - run: |
     #     git tag v${{ steps.version.outputs.version }}
