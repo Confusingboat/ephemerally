@@ -27,9 +27,9 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
 
-defaults:
-  run:
-    shell: pwsh
+# defaults:
+#   run:
+#     shell: pwsh
 
 jobs:
   tag:
@@ -40,7 +40,7 @@ jobs:
       minor: ${{ steps.version.outputs.minor }}
       patch: ${{ steps.version.outputs.patch }}
       prerelease: ${{ steps.version.outputs.prerelease }}
-      prerelease-depth: ${{ steps.determine-releasability.outputs.prerelease_depth }}
+      prerelease-depth: ${{ steps.get-prerelease-depth.outputs.prerelease_depth }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -61,12 +61,12 @@ jobs:
         echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
         echo prerelease: ${{ steps.version.outputs.prerelease }}
     
-    - name: determine releasability
-      id: determine-releasability
+    - name: get prerelease depth
+      id: get-prerelease-depth
       run: |
         echo "prerelease_depth=$(echo '${{ steps.version.outputs.prerelease }}' | tr -cd '.' | wc -c | tr -d ' ')" >> "$GITHUB_OUTPUT"
 
-    - run: echo "${{ steps.determine-releasability.outputs.prerelease_depth }}"
+    - run: echo "${{ steps.get-prerelease-depth.outputs.prerelease_depth }}"
     
     # - run: |
     #     git tag v${{ steps.version.outputs.version }}
