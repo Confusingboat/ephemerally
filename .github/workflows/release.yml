@@ -36,6 +36,7 @@ jobs:
           --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - run: |
+          dotnet nuget remove source nuget
           dotnet nuget add source `
           --username USERNAME `
           --password ${{ secrets.NUGET_ORG_API_KEY }} `
