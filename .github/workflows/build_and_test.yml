@@ -77,7 +77,7 @@ jobs:
     needs:
       - tag
       - build_and_test
-    if: ${{ github.event_name != 'pull_request' && needs.tag.outputs.prerelease == '' }}
+    if: ${{ github.event_name != 'pull_request' }}
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
