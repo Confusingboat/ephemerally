@@ -65,6 +65,8 @@ jobs:
     - name: unstable tag
       if: ${{ github.ref == 'refs/heads/main' }}
       uses: EndBug/latest-tag@v1.5.1
+      with:
+        ref: unstable
 
     # Update latest tag on main branch when tagged RTM
     - name: latest tag
