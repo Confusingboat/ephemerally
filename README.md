@@ -34,7 +34,7 @@ public async Task Test_should_pass()
     await using var container = await database.CreateEphemeralContainerAsync();
 
     // You can even bring your own database or container to clean up automatically
-    database.GetContainer("myCoolContainer").ToEphemeral();
+    await using var myCoolContainer = database.GetContainer("myCoolContainer").ToEphemeral();
 
     // Resources will be automatically cleaned up
     // as we exit the using scopes
