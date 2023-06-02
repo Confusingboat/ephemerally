@@ -39,20 +39,20 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
 
     public override string ToString() => FullName;
 
-    public static string GetFullName(
+    internal static string GetFullName(
         long expirationTimestamp,
         string nonce,
         string name) =>
         $"{PrefixValue}_{expirationTimestamp}_{nonce}_{name}";
 
-    public static EphemeralMetadata New(string fullName) =>
+    internal static EphemeralMetadata New(string fullName) =>
         fullName.Split('_') is
         [PrefixValue, var ts, var nonce, var friendlyName] &&
         long.TryParse(ts, out var timestamp)
             ? new(DateTimeOffset.FromUnixTimeMilliseconds(timestamp), nonce, friendlyName)
             : new(fullName);
 
-    public static EphemeralMetadata New(
+    internal static EphemeralMetadata New(
         string name,
         DateTimeOffset? expiration)
     {
