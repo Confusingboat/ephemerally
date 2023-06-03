@@ -26,6 +26,9 @@ jobs:
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
   build_and_test:
     runs-on: windows-2022
+    permissions:
+      checks: write
+      pull-requests: write
     # Reenable when Ubuntu is fixed
     # services:
     #   cosmos:
@@ -67,7 +70,14 @@ jobs:
 
     - name: Test
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --logger:trx --results-directory ${{ env.ArtifactDirectory }}
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2
+      if: always()
+      with:
+        files: |
+          ${{ env.ArtifactDirectory }}/**/*.trx
 
   tag:
     if: ${{ github.event_name != 'pull_request' }}
