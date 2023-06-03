@@ -26,6 +26,9 @@ jobs:
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
   build_and_test:
     runs-on: windows-2022
+    permissions:
+      checks: write
+      pull-requests: write
     # Reenable when Ubuntu is fixed
     # services:
     #   cosmos:
