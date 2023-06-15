@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33717.318
@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{EBD6
 		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\workflows\tag.yml = .github\workflows\tag.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ephemerally.SqlServer", "src\Ephemerally.SqlServer\Ephemerally.SqlServer.csproj", "{0B9D581D-58AA-4C71-8B0C-B6A8C8CF736F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,10 @@ Global
 		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B9D581D-58AA-4C71-8B0C-B6A8C8CF736F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B9D581D-58AA-4C71-8B0C-B6A8C8CF736F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B9D581D-58AA-4C71-8B0C-B6A8C8CF736F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B9D581D-58AA-4C71-8B0C-B6A8C8CF736F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{751D596B-8729-40DB-A172-EF9C55CBDA95} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{B99D5934-DD84-4709-95F8-90F795D66747} = {F9102409-3748-4DA6-9D7B-784339508244}
+		{0B9D581D-58AA-4C71-8B0C-B6A8C8CF736F} = {F9102409-3748-4DA6-9D7B-784339508244}
 		{7E763132-0532-4689-A738-7CB71635AC63} = {F9102409-3748-4DA6-9D7B-784339508244}
 		{E186436A-12C9-4140-A279-19227CFF8533} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8} = {F9102409-3748-4DA6-9D7B-784339508244}
