@@ -6,6 +6,8 @@ namespace Ephemerally;
 
 public static class PublicExtensions
 {
+    private const string DefaultPartitionKeyPath = "/id";
+
     public static EphemeralCosmosDatabase ToEphemeral(this Database database, EphemeralOptions options = default) =>
         new(new CosmosDatabaseEphemeral(database, options));
 
@@ -28,7 +30,9 @@ public static class PublicExtensions
         ThroughputProperties throughputProperties = default)
     {
         var metadata = options.OrDefault().GetNewMetadata();
-        containerProperties ??= new ContainerProperties(metadata.FullName, "/id");
+        containerProperties ??= new();
+        containerProperties.Id ??= metadata.FullName;
+        containerProperties.PartitionKeyPath ??= DefaultPartitionKeyPath;
         var response = await database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties).ConfigureAwait(false);
         return database.GetContainer(response.Resource.Id).ToEphemeral(options);
     }

@@ -1,4 +1,6 @@
-﻿namespace Ephemerally.Azure.Cosmos.Tests;
+﻿using Microsoft.Azure.Cosmos;
+
+namespace Ephemerally.Azure.Cosmos.Tests;
 
 public class EphemeralContainerTests
 {
@@ -38,7 +40,7 @@ public class EphemeralContainerTests
     {
         var client = CosmosEmulator.Client;
         await using var db = await client.CreateEphemeralDatabaseAsync();
-        
+
         var orphanContainer = await db.CreateEphemeralContainerAsync(new EphemeralCreationOptions(DateTimeOffset.MinValue));
 
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
@@ -108,5 +110,54 @@ public class EphemeralContainerTests
 
         Assert.That(await sut.ExistsAsync(), Is.True);
         Assert.That(await orphanContainer.ExistsAsync(), Is.True);
+    }
+
+    [Test]
+    public async Task Should_create_container_when_container_properties_Id_is_provided()
+    {
+        const string userSuppliedId = "user-supplied-id";
+
+        var client = CosmosEmulator.Client;
+        await using var db = await client.CreateEphemeralDatabaseAsync();
+
+        await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new ContainerProperties { Id = userSuppliedId });
+
+        Assert.That(await sut.ExistsAsync(), Is.True);
+        Assert.That(sut.Id, Is.EqualTo(userSuppliedId));
+    }
+
+    [Test]
+    public async Task Should_create_container_when_container_properties_Id_is_not_provided()
+    {
+        var client = CosmosEmulator.Client;
+        await using var db = await client.CreateEphemeralDatabaseAsync();
+
+        await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new());
+
+        Assert.That(await sut.ExistsAsync(), Is.True);
+    }
+
+    [Test]
+    public async Task Should_create_container_when_container_properties_PartitionKeyPath_is_provided()
+    {
+        const string userSuppliedKey = "/userSuppliedKey";
+
+        var client = CosmosEmulator.Client;
+        await using var db = await client.CreateEphemeralDatabaseAsync();
+
+        await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new ContainerProperties { PartitionKeyPath = userSuppliedKey });
+
+        Assert.That(await sut.ExistsAsync(), Is.True);
+    }
+
+    [Test]
+    public async Task Should_create_container_when_container_properties_PartitionKeyPath_is_not_provided()
+    {
+        var client = CosmosEmulator.Client;
+        await using var db = await client.CreateEphemeralDatabaseAsync();
+
+        await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new());
+
+        Assert.That(await sut.ExistsAsync(), Is.True);
     }
 }
