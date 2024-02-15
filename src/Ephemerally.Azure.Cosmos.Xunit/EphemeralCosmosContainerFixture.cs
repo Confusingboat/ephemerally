@@ -1,27 +1,43 @@
-using Microsoft.Azure.Cosmos;
-using Xunit;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Ephemerally.Azure.Cosmos.Xunit;
 
-internal abstract class EphemeralCosmosContainerFixture :
-    IAsyncDisposable,
-    IAsyncLifetime
+[SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
+public class EphemeralCosmosContainerFixture : EphemeralCosmosDatabaseFixture
 {
-    private Lazy<ValueTask<EphemeralCosmosContainer>> _container;
+    private readonly Lazy<Task<EphemeralCosmosContainer>> _container;
 
-    protected EphemeralCosmosContainerFixture(
-        Database database,
-        EphemeralCreationOptions options)
+    public EphemeralCosmosContainer Container => _container.Value.Result;
+
+    protected Task<EphemeralCosmosContainer> GetContainer() => _container.Value;
+
+    public EphemeralCosmosContainerFixture()
     {
-        _container = new(async () => await database.CreateEphemeralContainerAsync(options).ConfigureAwait(false));
+        _container = new(CreateContainerAsync);
     }
 
-    async Task IAsyncLifetime.InitializeAsync() =>
-        await _container.Value.ConfigureAwait(false);
+    protected virtual async Task<EphemeralCosmosContainer> CreateContainerAsync()
+    {
+        var db = await GetDatabase();
+        return await db.CreateEphemeralContainerAsync();
+    }
 
-    async Task IAsyncLifetime.DisposeAsync() =>
-        await ((IAsyncDisposable)this).DisposeAsync().ConfigureAwait(false);
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        await _container.Value;
+    }
 
-    ValueTask IAsyncDisposable.DisposeAsync() =>
-        _container.Value.Result.DisposeAsync();
+    public override async Task DisposeAsync()
+    {
+        if (!_container.IsValueCreated) return;
+
+        await IgnoreSocketException(async () =>
+        {
+            var container = await GetContainer();
+            await container.DisposeAsync();
+        });
+
+        await base.DisposeAsync();
+    }
 }

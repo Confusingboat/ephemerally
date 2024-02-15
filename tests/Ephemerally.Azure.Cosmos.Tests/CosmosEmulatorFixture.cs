@@ -1,4 +1,6 @@
-﻿namespace Ephemerally.Azure.Cosmos.Tests;
+﻿using Ephemerally.Azure.Cosmos.Xunit;
+
+namespace Ephemerally.Azure.Cosmos.Tests;
 
 [SetUpFixture]
 [FixtureLifeCycle(LifeCycle.SingleInstance)]
@@ -7,9 +9,7 @@ public class CosmosEmulatorFixture
     [OneTimeSetUp]
     public static async Task OneTimeSetUp()
     {
-        await CosmosEmulator.Client.ConnectOrThrowAsync();
+        using var client = CosmosEmulator.GetClient();
+        await client.ConnectOrThrowAsync();
     }
-
-    [OneTimeTearDown]
-    public static void OneTimeTearDown() => CosmosEmulator.Client.Dispose();
 }
