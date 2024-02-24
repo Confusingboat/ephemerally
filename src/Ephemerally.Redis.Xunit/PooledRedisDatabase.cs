@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 
 namespace Ephemerally.Redis.Xunit;
 
@@ -17,14 +13,12 @@ public class PooledRedisDatabase(in FixedSizeObjectPool<IDatabase> pool, IDataba
     public ValueTask DisposeAsync()
     {
         Return();
-        return Database is IAsyncDisposable disposable
-            ? disposable.DisposeAsync()
-            : new();
+        return Database.TryDisposeAsync();
     }
 
     public void Dispose()
     {
         Return();
-        (Database as IDisposable)?.Dispose();
+        Database.TryDispose();
     }
 }

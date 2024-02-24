@@ -25,6 +25,6 @@ public class EphemeralRedisDatabaseFixture : RedisMultiplexerFixture
     protected virtual async Task<IEphemeralRedisDatabase> CreateDatabaseAsync()
     {
         var multiplexer = await GetMultiplexer();
-        return multiplexer.GetDatabase();
+        return multiplexer.GetDatabase() as IEphemeralRedisDatabase;
     }
 }

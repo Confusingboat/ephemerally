@@ -19,7 +19,7 @@ public class PooledConnectionMultiplexer : IConnectionMultiplexer
         _multiplexer = multiplexer;
         _databases = new(
             databases
-                .Select(db =>multiplexer.GetDatabase(db))
+                .Select(db => (IDatabase)multiplexer.GetDatabase(db).ToEphemeral())
                 .ToList());
     }
 
@@ -27,7 +27,7 @@ public class PooledConnectionMultiplexer : IConnectionMultiplexer
     {
         foreach (var db in _databases.Objects)
         {
-            (db as IDisposable)?.Dispose();
+            db.TryDispose();
         }
         _multiplexer.Dispose();
     }
@@ -37,15 +37,15 @@ public class PooledConnectionMultiplexer : IConnectionMultiplexer
         await Task.WhenAll(
             _databases
                 .Objects
-                .Select(db => db is IAsyncDisposable disposable
-                    ? disposable.DisposeAsync().AsTask()
-                    : Task.CompletedTask));
+                .Select(db => db
+                    .TryDisposeAsync()
+                    .AsTask()));
         await _multiplexer.DisposeAsync();
     }
 
     #region Decorated Members
 
-    public IDatabase GetDatabase(int db = -1, object asyncState = null) => _databases.Get();
+    public IDatabase GetDatabase(int db = -1, object asyncState = null) => new PooledRedisDatabase(_databases, _databases.Get());
 
     #endregion
 

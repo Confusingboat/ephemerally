@@ -10,5 +10,5 @@ public class EphemeralRedisDatabase(in IEphemeral<IDatabase> databaseEphemeral) 
 
     public ValueTask DisposeAsync() => _databaseEphemeral.DisposeAsync();
 
-    public void Dispose() => (_databaseEphemeral as IDisposable)?.Dispose();
+    public void Dispose() => _databaseEphemeral.TryDispose();
 }
