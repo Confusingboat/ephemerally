@@ -11,15 +11,14 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     public DateTimeOffset Expiration => _metadata.Expiration!.Value;
     public IEphemeralMetadata Metadata => _metadata;
 
-    protected Ephemeral(TValue value, Func<TValue,string> getFullName, EphemeralOptions options)
+    protected Ephemeral(TValue value, Func<TValue, string> getFullName, EphemeralOptions options)
     {
         _object = value;
         _options = options;
-        _metadata = EphemeralMetadata.New(getFullName(value));
+        _metadata = EphemeralMetadata.Parse(getFullName(value));
     }
 
     public TValue Value => _object ?? throw new InvalidOperationException("The object has not been created yet.");
-
 
     /// <summary>
     /// In an overridden implementation, this method should delete the TObject.
@@ -41,5 +40,19 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
         if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
 
         await CleanupAllAsync().ConfigureAwait(false);
+    }
+
+    protected virtual void CleanupSelf() { }
+
+    protected virtual void CleanupAll() { }
+
+    public void Dispose()
+    {
+        if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
+
+        CleanupSelf();
+        if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
+
+        CleanupAll();
     }
 }

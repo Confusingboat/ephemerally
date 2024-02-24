@@ -25,12 +25,14 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     /// <param name="expiration"></param>
     /// <param name="nonce"></param>
     /// <param name="friendlyName"></param>
+    /// <param name="fullName"></param>
     private EphemeralMetadata(
         DateTimeOffset expiration,
         string nonce,
-        string friendlyName)
+        string friendlyName,
+        string fullName = default)
     {
-        FullName = GetFullName(expiration.ToUnixTimeMilliseconds(), nonce, friendlyName);
+        FullName = fullName ?? GetFullName(expiration.ToUnixTimeMilliseconds(), nonce, friendlyName);
         Expiration = expiration;
         NamePart = friendlyName;
         Nonce = nonce;
@@ -45,11 +47,11 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
         string name) =>
         $"{PrefixValue}_{expirationTimestamp}_{nonce}_{name}";
 
-    internal static EphemeralMetadata New(string fullName) =>
+    internal static EphemeralMetadata Parse(string fullName) =>
         fullName.Split('_') is
         [PrefixValue, var ts, var nonce, var friendlyName] &&
         long.TryParse(ts, out var timestamp)
-            ? new(DateTimeOffset.FromUnixTimeMilliseconds(timestamp), nonce, friendlyName)
+            ? new(DateTimeOffset.FromUnixTimeMilliseconds(timestamp), nonce, friendlyName, fullName)
             : new(fullName);
 
     internal static EphemeralMetadata New(

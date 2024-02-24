@@ -12,7 +12,7 @@ public static class PublicExtensions
         metadata.Expiration.HasValue && metadata.Expiration.Value <= now;
 
     public static IEphemeralMetadata GetContainerMetadata(this string fullName) =>
-        EphemeralMetadata.New(fullName);
+        EphemeralMetadata.Parse(fullName);
 
     public static IEphemeral<T> ToEphemeral<T>(this T value,
         Func<Task> cleanupSelfAsync) where T : class => new SingleEphemeral<T>(value, cleanupSelfAsync);
