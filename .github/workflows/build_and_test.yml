@@ -13,6 +13,7 @@ on:
       - '*'
 
 env:
+  TIMEZONE: 'America/Chicago'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   ArtifactDirectory: ${{ github.workspace}}/artifacts
@@ -50,7 +51,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6
+        dotnet-version: 8
         dotnet-quality: ga
 
     - name: Restore dependencies
@@ -69,15 +70,26 @@ jobs:
     #     interval: 500
 
     - name: Test
+      id: test
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       run: dotnet test --no-build --verbosity normal --logger:trx --results-directory ${{ env.ArtifactDirectory }}
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v2
-      if: always()
+    - name: Test Results Comment
+      if: always() && steps.test.outcome == 'success' || steps.test.outcome == 'failure'
+      uses: im-open/process-dotnet-test-results@v2.4
       with:
-        files: |
-          ${{ env.ArtifactDirectory }}/**/*.trx
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        timezone: ${{ env.TIMEZONE }}
+        create-status-check: false
+        create-pr-comment: true
+        comment-identifier: 'TestResults'
+
+    # - name: Publish Test Results
+    #   uses: EnricoMi/publish-unit-test-result-action/composite@v2
+    #   if: always()
+    #   with:
+    #     files: |
+    #       ${{ env.ArtifactDirectory }}/**/*.trx
 
   tag:
     if: ${{ github.event_name != 'pull_request' }}
