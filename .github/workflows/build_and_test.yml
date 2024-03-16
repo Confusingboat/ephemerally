@@ -26,27 +26,27 @@ jobs:
   # Cosmos DB Emulator is broken on Ubuntu
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
   build_and_test:
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
     permissions:
       checks: write
       pull-requests: write
     # Reenable when Ubuntu is fixed
-    # services:
-    #   cosmos:
-    #     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
-    #     ports:
-    #       - 8081:8081
-    #       - 10250-10255:10250-10255
-    #     env:
-    #       AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
-    #       AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
+    services:
+      cosmos:
+        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+        ports:
+          - 8081:8081
+          - 10250-10255:10250-10255
+        env:
+          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
+          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
     steps:
     - uses: actions/checkout@v2
 
     # Remove when Ubuntu is fixed
-    - name: Start Cosmos DB Emulator
-      if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-      uses: southpolesteve/cosmos-emulator-github-action@v1
+    # - name: Start Cosmos DB Emulator
+    #   if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
+    #   uses: southpolesteve/cosmos-emulator-github-action@v1
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
