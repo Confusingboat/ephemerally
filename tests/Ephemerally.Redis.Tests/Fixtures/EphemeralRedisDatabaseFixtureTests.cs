@@ -22,11 +22,11 @@ public class EphemeralRedisDatabaseFixtureTests_7(
 
 [Collection(RedisTestCollection.Name)]
 public abstract class EphemeralRedisDatabaseFixtureTests(
-    EphemeralRedisDatabasePoolFixture fixture,
+    EphemeralRedisDatabasePoolFixture bigFixture,
     EphemeralRedisDatabasePoolFixture smallFixture)
 {
     private readonly EphemeralRedisDatabasePoolFixture
-        _fixture = fixture,
+        _bigFixture = bigFixture,
         _smallFixture = smallFixture;
 
     [Fact]
@@ -34,10 +34,10 @@ public abstract class EphemeralRedisDatabaseFixtureTests(
     {
         // Arrange
         // Act
-        await using var db1 = _fixture.Multiplexer.GetEphemeralDatabase();
-        await using var db2 = _fixture.Multiplexer.GetEphemeralDatabase();
-        await using var db3 = _fixture.Multiplexer.GetEphemeralDatabase();
-        await using var db4 = _fixture.Multiplexer.GetEphemeralDatabase();
+        await using var db1 = _bigFixture.Multiplexer.GetEphemeralDatabase();
+        await using var db2 = _bigFixture.Multiplexer.GetEphemeralDatabase();
+        await using var db3 = _bigFixture.Multiplexer.GetEphemeralDatabase();
+        await using var db4 = _bigFixture.Multiplexer.GetEphemeralDatabase();
 
         // Assert
         new[]
