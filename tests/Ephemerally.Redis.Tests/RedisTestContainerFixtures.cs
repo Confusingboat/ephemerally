@@ -18,6 +18,7 @@ public class RedisTestContainerFixture_6 : RedisTestContainerFixture
         new ContainerBuilder()
             .WithImage("redis:6-alpine")
             .WithPortBinding(6379, true)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
             .Build();
 }
 
@@ -28,5 +29,6 @@ public class RedisTestContainerFixture_7 : RedisTestContainerFixture
         new ContainerBuilder()
             .WithImage("redis:7-alpine")
             .WithPortBinding(6379, true)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
             .Build();
 }
