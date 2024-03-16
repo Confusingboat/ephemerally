@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Frozen;
 
-namespace Ephemerally.Redis.Xunit;
+namespace Ephemerally.Redis;
 
 public class FixedSizeObjectPool<T>
 {
@@ -24,7 +24,7 @@ public class FixedSizeObjectPool<T>
     {
         var obj = _availableObjects.Take();
         if (!_objects.TryGetValue(obj, out var semaphore))
-            throw new InvalidOperationException("Object not from pool");
+            throw new ObjectNotFromPoolException();
 
         semaphore.Wait();
         return obj;
@@ -33,7 +33,7 @@ public class FixedSizeObjectPool<T>
     public void Return(T obj)
     {
         if (!_objects.TryGetValue(obj, out var semaphore))
-            throw new InvalidOperationException("Object not from pool");
+            throw new ObjectNotFromPoolException();
 
         try
         {
@@ -41,11 +41,15 @@ public class FixedSizeObjectPool<T>
         }
         catch (SemaphoreFullException)
         {
-            throw new InvalidOperationException("Object already returned");
+            throw new ObjectAlreadyReturnedException();
         }
             
 
         if (!_availableObjects.TryAdd(obj))
-            throw new InvalidOperationException("Object already returned");
+            throw new ObjectAlreadyReturnedException();
     }
 }
+
+public class ObjectNotFromPoolException() : InvalidOperationException("Object not from pool");
+
+public class ObjectAlreadyReturnedException() : InvalidOperationException("Object already returned");
