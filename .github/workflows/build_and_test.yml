@@ -23,9 +23,43 @@ defaults:
     shell: pwsh
 
 jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+    steps:
+    - uses: actions/checkout@v2
+  
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8
+        dotnet-quality: ga
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration:Release
+
+    - name: Test
+      id: test
+      run: dotnet test --filter:'FullyQuallifiedName!~Cosmos' --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
+
+    - name: Test Results Comment
+      if: always()
+      uses: im-open/process-dotnet-test-results@v2.4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        timezone: ${{ env.TIMEZONE }}
+        create-status-check: false
+        create-pr-comment: true
+        comment-identifier: 'TestResults'
+
   # Cosmos DB Emulator is broken on Ubuntu
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
-  build_and_test:
+  build_and_test_cosmos:
     runs-on: windows-2022
     permissions:
       checks: write
@@ -72,7 +106,7 @@ jobs:
     - name: Test
       id: test
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-      run: dotnet test --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
+      run: dotnet test --filter:'FullyQuallifiedName~Cosmos' --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Test Results Comment
       if: always()
@@ -99,6 +133,7 @@ jobs:
     needs:
       - tag
       - build_and_test
+      - build_and_test_cosmos
     if: ${{ github.event_name != 'pull_request' && needs.tag.outputs.prerelease-depth < 2 }}
     uses: ./.github/workflows/release.yml
     with:
