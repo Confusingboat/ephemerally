@@ -26,27 +26,27 @@ jobs:
   # Cosmos DB Emulator is broken on Ubuntu
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
   build_and_test:
-    runs-on: ubuntu-latest
+    runs-on: windows-2022
     permissions:
       checks: write
       pull-requests: write
     # Reenable when Ubuntu is fixed
-    services:
-      cosmos:
-        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
-        ports:
-          - 8081:8081
-          - 10250-10255:10250-10255
-        env:
-          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
-          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
+    # services:
+    #   cosmos:
+    #     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    #     ports:
+    #       - 8081:8081
+    #       - 10250-10255:10250-10255
+    #     env:
+    #       AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
+    #       AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
     steps:
     - uses: actions/checkout@v2
 
     # Remove when Ubuntu is fixed
-    # - name: Start Cosmos DB Emulator
-    #   if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-    #   uses: southpolesteve/cosmos-emulator-github-action@v1
+    - name: Start Cosmos DB Emulator
+      if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
+      uses: southpolesteve/cosmos-emulator-github-action@v1
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -58,7 +58,7 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration:Release
 
     # Reenable when Ubuntu is fixed
     # - name: Wait for Cosmos Emulator
@@ -72,10 +72,10 @@ jobs:
     - name: Test
       id: test
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-      run: dotnet test --no-build --verbosity normal --logger:trx --results-directory ${{ env.ArtifactDirectory }}
+      run: dotnet test --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Test Results Comment
-      if: always() && steps.test.outcome == 'success' || steps.test.outcome == 'failure'
+      if: always()
       uses: im-open/process-dotnet-test-results@v2.4
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
