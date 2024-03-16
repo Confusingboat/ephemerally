@@ -18,4 +18,20 @@ public static class PublicExtensions
         this IConnectionMultiplexer multiplexer,
         int db = -1) =>
         multiplexer.GetDatabase(db).AsEphemeral();
+
+    public static EphemeralConnectionMultiplexer AsEphemeralMultiplexer(this IConnectionMultiplexer multiplexer) =>
+        multiplexer is EphemeralConnectionMultiplexer connectionMultiplexer
+            ? connectionMultiplexer
+            : multiplexer.ToEphemeralMultiplexer();
+
+    public static EphemeralConnectionMultiplexer ToEphemeralMultiplexer(this IConnectionMultiplexer multiplexer) =>
+        new(multiplexer);
+
+    public static async Task<EphemeralConnectionMultiplexer> AsEphemeralMultiplexer<T>(this Task<T> creatingMultiplexer)
+        where T : IConnectionMultiplexer =>
+        (await creatingMultiplexer.ConfigureAwait(false)).AsEphemeralMultiplexer();
+
+    public static async Task<EphemeralConnectionMultiplexer> ToEphemeralMultiplexer<T>(this Task<T> creatingMultiplexer)
+        where T : IConnectionMultiplexer =>
+        (await creatingMultiplexer.ConfigureAwait(false)).ToEphemeralMultiplexer();
 }

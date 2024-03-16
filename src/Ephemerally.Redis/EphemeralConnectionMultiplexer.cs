@@ -3,18 +3,22 @@ using StackExchange.Redis;
 using StackExchange.Redis.Maintenance;
 using StackExchange.Redis.Profiling;
 
-namespace Ephemerally.Redis.Xunit;
+namespace Ephemerally.Redis;
 
-public class PooledConnectionMultiplexer : IConnectionMultiplexer
+public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
 {
+    private bool _disposed;
+
     private readonly IConnectionMultiplexer _multiplexer;
 
     private readonly FixedSizeObjectPool<IDatabase> _databases;
 
-    public PooledConnectionMultiplexer(IConnectionMultiplexer multiplexer)
+    public EphemeralConnectionMultiplexer(IConnectionMultiplexer multiplexer)
         : this(multiplexer, Enumerable.Range(0, 16).ToArray()) { }
 
-    public PooledConnectionMultiplexer(IConnectionMultiplexer multiplexer, int[] databases)
+    public EphemeralConnectionMultiplexer(
+        IConnectionMultiplexer multiplexer,
+        int[] databases)
     {
         _multiplexer = multiplexer;
         _databases = new(
@@ -25,22 +29,42 @@ public class PooledConnectionMultiplexer : IConnectionMultiplexer
 
     public void Dispose()
     {
-        foreach (var db in _databases.Objects)
+        try
         {
-            db.TryDispose();
+            if (_disposed) return;
+
+            foreach (var db in _databases.Objects)
+            {
+                db.TryDispose();
+            }
         }
-        _multiplexer.Dispose();
+        finally
+        {
+            _disposed = true;
+
+            _multiplexer.Dispose();
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await Task.WhenAll(
-            _databases
-                .Objects
-                .Select(db => db
-                    .TryDisposeAsync()
-                    .AsTask()));
-        await _multiplexer.DisposeAsync();
+        try
+        {
+            if (_disposed) return;
+
+            await Task.WhenAll(
+                _databases
+                    .Objects
+                    .Select(db => db
+                        .TryDisposeAsync()
+                        .AsTask()));
+        }
+        finally
+        {
+            _disposed = true;
+
+            await _multiplexer.DisposeAsync();
+        }
     }
 
     #region Decorated Members

@@ -5,12 +5,12 @@ using StackExchange.Redis;
 namespace Ephemerally.Redis.Tests.Fixtures;
 
 // ReSharper disable once InconsistentNaming
-//public class EphemeralRedisDatabaseFixtureTests_6(
-//    BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> bigFixture,
-//    SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> smallFixture)
-//    : EphemeralRedisDatabaseFixtureTests(bigFixture, smallFixture),
-//    IClassFixture<BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>,
-//    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>;
+public class EphemeralRedisDatabaseFixtureTests_6(
+    BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> bigFixture,
+    SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> smallFixture)
+    : EphemeralRedisDatabaseFixtureTests(bigFixture, smallFixture),
+    IClassFixture<BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>,
+    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>;
 
 // ReSharper disable once InconsistentNaming
 public class EphemeralRedisDatabaseFixtureTests_7(
@@ -28,7 +28,6 @@ public abstract class EphemeralRedisDatabaseFixtureTests(
     private readonly EphemeralRedisDatabasePoolFixture
         _fixture = fixture,
         _smallFixture = smallFixture;
-
 
     [Fact]
     public async Task Create_database_gets_a_new_database_every_time()
@@ -77,7 +76,7 @@ public class BigEphemeralRedisDatabasePoolFixture<TRedisTestContainerFixture>()
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
         var multiplexer = await base.CreateMultiplexerAsync();
-        return new PooledConnectionMultiplexer(multiplexer, [0, 1, 2, 3]);
+        return new EphemeralConnectionMultiplexer(multiplexer, [0, 1, 2, 3]);
     }
 }
 
@@ -88,6 +87,6 @@ public class SmallEphemeralRedisDatabasePoolFixture<TRedisTestContainerFixture>(
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
         var multiplexer = await base.CreateMultiplexerAsync();
-        return new PooledConnectionMultiplexer(multiplexer, [0, 1]);
+        return new EphemeralConnectionMultiplexer(multiplexer, [0, 1]);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-namespace Ephemerally.Redis.Xunit;
+namespace Ephemerally.Redis;
 
 public class PooledRedisDatabase(in FixedSizeObjectPool<IDatabase> pool, IDatabase database) :
     RedisDatabaseDecorator(database),

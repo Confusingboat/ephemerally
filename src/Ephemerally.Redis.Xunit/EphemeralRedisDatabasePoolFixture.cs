@@ -11,6 +11,6 @@ public class EphemeralRedisDatabasePoolFixture : RedisMultiplexerFixture
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
         var implementation = await base.CreateMultiplexerAsync();
-        return new PooledConnectionMultiplexer(implementation);
+        return new EphemeralConnectionMultiplexer(implementation);
     }
 }
