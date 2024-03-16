@@ -8,17 +8,17 @@ public class PooledRedisDatabase(in FixedSizeObjectPool<IDatabase> pool, IDataba
 {
     private readonly FixedSizeObjectPool<IDatabase> _pool = pool;
 
-    private void Return() => _pool.Return(Database);
+    private void Return() => _pool.Return(RedisDatabase);
 
     public ValueTask DisposeAsync()
     {
         Return();
-        return Database.TryDisposeAsync();
+        return RedisDatabase.TryDisposeAsync();
     }
 
     public void Dispose()
     {
         Return();
-        Database.TryDispose();
+        RedisDatabase.TryDispose();
     }
 }

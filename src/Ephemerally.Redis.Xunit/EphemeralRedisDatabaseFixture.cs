@@ -1,11 +1,10 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Ephemerally.Redis.Xunit;
 
-public class EphemeralRedisDatabaseFixture : RedisMultiplexerFixture
+internal class EphemeralRedisDatabaseFixture : EphemeralRedisDatabasePoolFixture
 {
     private readonly Lazy<Task<IEphemeralRedisDatabase>> _database;
 
@@ -14,13 +13,7 @@ public class EphemeralRedisDatabaseFixture : RedisMultiplexerFixture
     public EphemeralRedisDatabaseFixture()
     {
         _database = new(CreateDatabaseAsync);
-    }
-
-    protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
-    {
-        var implementation = await base.CreateMultiplexerAsync();
-        return new PooledConnectionMultiplexer(implementation);
-    }
+    }  
 
     protected virtual async Task<IEphemeralRedisDatabase> CreateDatabaseAsync()
     {

@@ -23,7 +23,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Redis", "src\Ep
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Redis.Tests", "tests\Ephemerally.Redis.Tests\Ephemerally.Redis.Tests.csproj", "{E186436A-12C9-4140-A279-19227CFF8533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ephemerally.Redis.Xunit", "src\Ephemerally.Redis.Xunit\Ephemerally.Redis.Xunit.csproj", "{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Redis.Xunit", "src\Ephemerally.Redis.Xunit\Ephemerally.Redis.Xunit.csproj", "{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{EBD69ABD-040A-447C-8633-D929206F2BBC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build_and_test.yml = .github\workflows\build_and_test.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\tag.yml = .github\workflows\tag.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

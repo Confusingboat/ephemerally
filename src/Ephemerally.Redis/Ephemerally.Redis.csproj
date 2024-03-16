@@ -8,11 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="stackexchange.redis" Version="2.7.20" />
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Ephemerally\Ephemerally.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IsExternalInit" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="minver" Version="4.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>    
+    <PackageReference Include="stackexchange.redis" Version="2.7.20" />
   </ItemGroup>
 
 </Project>

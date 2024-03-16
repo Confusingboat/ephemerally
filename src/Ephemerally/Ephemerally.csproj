@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <InternalsVisibleTo Include="Ephemerally.Azure.Cosmos" />
+    <InternalsVisibleTo Include="Ephemerally.Redis" />
   </ItemGroup>
 
   <ItemGroup>

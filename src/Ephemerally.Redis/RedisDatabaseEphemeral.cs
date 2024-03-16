@@ -2,9 +2,14 @@
 
 namespace Ephemerally.Redis;
 
-public class RedisDatabaseEphemeral(IDatabase value) : Ephemeral<IDatabase>(value, x => x.Database.ToString(), null),
+public class RedisDatabaseEphemeral(IDatabase value) : Ephemeral<IDatabase>(value, x => x.Database.ToString(), EphemeralCreationOptions),
     IDisposable
 {
+    private static readonly EphemeralCreationOptions EphemeralCreationOptions = new()
+    {
+        CleanupBehavior = CleanupBehavior.SelfOnly
+    };
+
     protected override Task CleanupSelfAsync() =>
         Task.WhenAll(
             Value.Multiplexer.GetEndPoints(true)

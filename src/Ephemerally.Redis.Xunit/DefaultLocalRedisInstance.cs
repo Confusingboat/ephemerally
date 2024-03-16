@@ -6,5 +6,7 @@ public class DefaultLocalRedisInstance
 {
     public static ConnectionMultiplexer Multiplexer { get; } = ConnectionMultiplexer.Connect(ConnectionString);
 
-    public const string ConnectionString = "localhost:6379";
+    public const string ConnectionString = "localhost:6379,allowAdmin=true";
+
+    public static ushort Port => 6379;
 }
