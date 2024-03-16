@@ -116,7 +116,7 @@ jobs:
         timezone: ${{ env.TIMEZONE }}
         create-status-check: false
         create-pr-comment: true
-        comment-identifier: 'TestResults'
+        comment-identifier: 'CosmosTestResults'
 
     # - name: Publish Test Results
     #   uses: EnricoMi/publish-unit-test-result-action/composite@v2
