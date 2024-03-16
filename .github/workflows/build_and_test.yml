@@ -45,7 +45,7 @@ jobs:
 
     - name: Test
       id: test
-      run: dotnet test --filter:'FullyQuallifiedName!~Cosmos' --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
+      run: dotnet test --filter:'FullyQualifiedName!~Cosmos' --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Test Results Comment
       if: always()
@@ -106,7 +106,7 @@ jobs:
     - name: Test
       id: test
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-      run: dotnet test --filter:'FullyQuallifiedName~Cosmos' --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
+      run: dotnet test --filter:'FullyQualifiedName~Cosmos' --no-build --configuration:Release --logger:trx --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Test Results Comment
       if: always()
