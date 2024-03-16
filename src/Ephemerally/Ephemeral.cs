@@ -3,6 +3,8 @@ namespace Ephemerally;
 public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     where TValue : class
 {
+    private bool _disposed;
+
     private readonly EphemeralOptions _options;
     private readonly EphemeralMetadata _metadata;
     private readonly TValue _object;
@@ -34,12 +36,23 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
 
     public async ValueTask DisposeAsync()
     {
-        if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
+        try
+        {
+            if (_disposed) return;
 
-        await CleanupSelfAsync().ConfigureAwait(false);
-        if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
+            if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
 
-        await CleanupAllAsync().ConfigureAwait(false);
+            await CleanupSelfAsync().ConfigureAwait(false);
+            if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
+
+            await CleanupAllAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _disposed = true;
+
+            await Value.TryDisposeAsync().ConfigureAwait(false);
+        }
     }
 
     protected virtual void CleanupSelf() { }
@@ -48,11 +61,22 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
 
     public void Dispose()
     {
-        if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
+        try
+        {
+            if (_disposed) return;
 
-        CleanupSelf();
-        if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
+            if (_options.CleanupBehavior == CleanupBehavior.NoCleanup) return;
 
-        CleanupAll();
+            CleanupSelf();
+            if (_options.CleanupBehavior == CleanupBehavior.SelfOnly) return;
+
+            CleanupAll();
+        }
+        finally
+        {
+            _disposed = true;
+
+            Value.TryDispose();
+        }
     }
 }

@@ -11,6 +11,8 @@
     <InternalsVisibleTo Include="$(AssemblyName).Tests" />
     <InternalsVisibleTo Include="Ephemerally.Azure.Cosmos" />
     <InternalsVisibleTo Include="Ephemerally.Redis" />
+    <InternalsVisibleTo Include="Ephemerally.Redis.Tests" />
+    <InternalsVisibleTo Include="Ephemerally.Redis.Xunit" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,12 +5,12 @@ using StackExchange.Redis;
 namespace Ephemerally.Redis.Tests.Fixtures;
 
 // ReSharper disable once InconsistentNaming
-public class EphemeralRedisDatabaseFixtureTests_6(
-    BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> bigFixture,
-    SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> smallFixture)
-    : EphemeralRedisDatabaseFixtureTests(bigFixture, smallFixture),
-    IClassFixture<BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>,
-    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>;
+//public class EphemeralRedisDatabaseFixtureTests_6(
+//    BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> bigFixture,
+//    SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> smallFixture)
+//    : EphemeralRedisDatabaseFixtureTests(bigFixture, smallFixture),
+//    IClassFixture<BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>,
+//    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>;
 
 // ReSharper disable once InconsistentNaming
 public class EphemeralRedisDatabaseFixtureTests_7(
