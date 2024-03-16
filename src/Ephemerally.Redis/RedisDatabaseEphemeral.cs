@@ -30,5 +30,5 @@ public class RedisDatabaseEphemeral(IDatabase value) : Ephemeral<IDatabase>(valu
 
     // TODO: Implement some way to persist that the database hasn't been cleaned up.
     //       In Redis 7+ this could be a well-known lua function that returns the expiry
-    protected override Task CleanupAllAsync() => Task.CompletedTask;
+    protected override Task CleanupAllAsync() => throw new NotSupportedException();
 }
