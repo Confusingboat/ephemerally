@@ -19,6 +19,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Azure.Cosmos.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Azure", "src\Ephemerally.Azure\Ephemerally.Azure.csproj", "{B99D5934-DD84-4709-95F8-90F795D66747}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Redis", "src\Ephemerally.Redis\Ephemerally.Redis.csproj", "{7E763132-0532-4689-A738-7CB71635AC63}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Redis.Tests", "tests\Ephemerally.Redis.Tests\Ephemerally.Redis.Tests.csproj", "{E186436A-12C9-4140-A279-19227CFF8533}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ephemerally.Redis.Xunit", "src\Ephemerally.Redis.Xunit\Ephemerally.Redis.Xunit.csproj", "{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{EBD69ABD-040A-447C-8633-D929206F2BBC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build_and_test.yml = .github\workflows\build_and_test.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\tag.yml = .github\workflows\tag.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +62,18 @@ Global
 		{B99D5934-DD84-4709-95F8-90F795D66747}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B99D5934-DD84-4709-95F8-90F795D66747}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B99D5934-DD84-4709-95F8-90F795D66747}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E763132-0532-4689-A738-7CB71635AC63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E763132-0532-4689-A738-7CB71635AC63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E763132-0532-4689-A738-7CB71635AC63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E763132-0532-4689-A738-7CB71635AC63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E186436A-12C9-4140-A279-19227CFF8533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E186436A-12C9-4140-A279-19227CFF8533}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E186436A-12C9-4140-A279-19227CFF8533}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E186436A-12C9-4140-A279-19227CFF8533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +85,9 @@ Global
 		{751D596B-8729-40DB-A172-EF9C55CBDA95} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{DB56A0B0-0EAC-4DE1-8E4D-B62AC8109ACF} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
 		{B99D5934-DD84-4709-95F8-90F795D66747} = {F9102409-3748-4DA6-9D7B-784339508244}
+		{7E763132-0532-4689-A738-7CB71635AC63} = {F9102409-3748-4DA6-9D7B-784339508244}
+		{E186436A-12C9-4140-A279-19227CFF8533} = {AF30F58C-5E9B-4406-9E13-114C46F4E410}
+		{5A30E9EA-AB80-4E08-A81F-99CE329B34B8} = {F9102409-3748-4DA6-9D7B-784339508244}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5690E595-5302-46D7-AA86-89D55117B068}
