@@ -46,26 +46,26 @@ jobs:
     - name: Test Core
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       run: |
-          dotnet test 'tests\Ephemerally.Tests\'
-          --no-build
-          --configuration:Release
-          --logger:trx
+          dotnet test 'tests\Ephemerally.Tests\' `
+          --no-build `
+          --configuration:Release `
+          --logger:trx `
           --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Test Redis
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       run: |
-          dotnet test 'tests\Ephemerally.Redis.Tests\'
-          --no-build
-          --configuration:Release
-          --logger:trx
+          dotnet test 'tests\Ephemerally.Redis.Tests\' `
+          --no-build `
+          --configuration:Release `
+          --logger:trx `
           --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Upload Test Results
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       uses: actions/upload-artifact@v4
       with:
-        name: TestResults
+        name: test-results
         path: ${{ env.ArtifactDirectory }}/**/*.trx
 
     # - name: Test Results Comment
@@ -128,17 +128,17 @@ jobs:
     - name: Test Cosmos
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       run: |
-          dotnet test 'tests\Ephemerally.Azure.Cosmos.Tests\'
-          --no-build
-          --configuration:Release
-          --logger:trx
+          dotnet test 'tests\Ephemerally.Azure.Cosmos.Tests\' `
+          --no-build `
+          --configuration:Release `
+          --logger:trx `
           --results-directory ${{ env.ArtifactDirectory }}
 
     - name: Upload Test Results
       if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
       uses: actions/upload-artifact@v4
       with:
-        name: TestResults
+        name: cosmos-test-results
         path: ${{ env.ArtifactDirectory }}/**/*.trx
 
     # - name: Test Results Comment
