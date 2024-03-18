@@ -166,7 +166,7 @@ jobs:
       - tag
     steps:
     - name: Echo is-prerelease
-      run: ${{ needs.tag.outputs.is-prerelease }}
+      run: echo ${{ needs.tag.outputs.is-prerelease }}
 
   release:
     needs:
