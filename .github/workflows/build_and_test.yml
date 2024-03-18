@@ -168,7 +168,7 @@ jobs:
     - name: Echo tag output
       run: |
         echo prerelease-depth: "${{ fromJSON(needs.tag.outputs.prerelease-depth) }}"
-        echo is-prerelease: "${{ toJSON(needs.tag.outputs.is-prerelease) }}"
+        echo is-prerelease: "${{ fromJSON(needs.tag.outputs.is-prerelease) }}"
 
   release:
     needs:
