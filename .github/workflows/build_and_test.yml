@@ -167,6 +167,7 @@ jobs:
     steps:
     - name: Echo tag output
       run: |
+        echo version: "${{ needs.tag.outputs.version }}"
         echo prerelease-depth: "${{ fromJSON(needs.tag.outputs.prerelease-depth) }}"
         echo is-prerelease: "${{ fromJSON(needs.tag.outputs.is-prerelease) }}"
 
