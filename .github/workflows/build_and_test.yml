@@ -157,7 +157,7 @@ jobs:
         comment-identifier: 'TestResults'
 
   tag:
-    if: ${{ github.event_name != 'pull_request' }}a
+    if: ${{ github.event_name != 'pull_request' }}
     uses: ./.github/workflows/tag.yml
 
   test-tag-output:
@@ -166,16 +166,16 @@ jobs:
       - tag
     steps:
     - name: Echo is-prerelease
-      run: echo "${{ needs.tag.outputs.is-prerelease }}"
+      run: echo "${{ toJSON(needs.tag.outputs.is-prerelease) }}"
 
   release:
     needs:
       - tag
       - build_and_test
       - build_and_test_cosmos
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.tag.outputs.prerelease-depth < 2 }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && fromJSON(needs.tag.outputs.prerelease-depth) < 2 }}
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
-      is-prerelease: ${{ needs.tag.outputs.is-prerelease === 'true' }}
+      is-prerelease: ${{ needs.tag.outputs.is-prerelease }}
     secrets: inherit
