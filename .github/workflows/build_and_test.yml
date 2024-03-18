@@ -176,7 +176,7 @@ jobs:
       - tag
       - build_and_test
       - build_and_test_cosmos
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && fromJSON(needs.tag.outputs.prerelease-depth) < 2 }}
+    if: ${{ github.ref_type == 'tag' || github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && fromJSON(needs.tag.outputs.prerelease-depth) < 2 }}
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
