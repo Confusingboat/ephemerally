@@ -54,7 +54,7 @@ jobs:
 
     - name: Echo version #version major minor patch prerelease
       run: |
-        echo Version: ${{ steps.version.outputs.version }}
+        echo version: ${{ steps.version.outputs.version }}
         echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
         echo prerelease: ${{ steps.version.outputs.prerelease }}
     
@@ -69,7 +69,7 @@ jobs:
     - name: Set is-prerelease
       id: set-is-prerelease
       run: |
-        echo "is_prerelease=${{ contains(steps.version.outputs.prerelease, '-') && 'true' || 'false' }}" >> "$GITHUB_OUTPUT"
+        echo "is_prerelease=${{ contains(steps.version.outputs.version, '-') && 'true' || 'false' }}" >> "$GITHUB_OUTPUT"
     
     - name: Tag version
       if: ${{ github.ref == 'refs/heads/main' }}
