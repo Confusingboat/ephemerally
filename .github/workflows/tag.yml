@@ -21,6 +21,9 @@ on:
       prerelease-depth:
         description: "Number of periods in the prerelease version"
         value: ${{ jobs.tag.outputs.prerelease-depth }}
+      is-prerelease:
+        description: "Boolean string indicating whether the version is a prerelease"
+        value: {{ jobs.tag.outputs.is-prerelease }}
 
 env:
   #MinVerIgnoreHeight: true
