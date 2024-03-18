@@ -70,6 +70,9 @@ jobs:
       id: set-is-prerelease
       run: |
         echo "is_prerelease=$(echo '${{ contains(steps.version.outputs.version, '-') && 'true' || 'false' }}')" >> "$GITHUB_OUTPUT"
+
+    - name: Echo is-prerelease
+      run: echo "${{ steps.set-is-prerelease.outputs.is_prerelease }}"
     
     - name: Tag version
       if: ${{ github.ref == 'refs/heads/main' }}
