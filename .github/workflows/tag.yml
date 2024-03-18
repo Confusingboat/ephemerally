@@ -37,7 +37,7 @@ jobs:
       patch: ${{ steps.version.outputs.patch }}
       prerelease: ${{ steps.version.outputs.prerelease }}
       prerelease-depth: ${{ steps.set-prerelease-depth.outputs.prerelease_depth }}
-      is-prerelease: ${{ steps.set-is-prerelease.is_prerelease }}
+      is-prerelease: ${{ steps.set-is-prerelease.outputs.is_prerelease }}
     steps:
     - uses: actions/checkout@v2
       with:
