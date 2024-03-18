@@ -53,7 +53,7 @@ jobs:
         minver-version: 4.3.0
         auto-increment: patch
         tag-prefix: v
-        MinVerDefaultPreReleaseIdentifiers: preview.0
+        default-pre-release-phase: preview.0
 
     - name: Echo version #version major minor patch prerelease
       run: |
