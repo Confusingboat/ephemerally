@@ -37,6 +37,7 @@ jobs:
       patch: ${{ steps.version.outputs.patch }}
       prerelease: ${{ steps.version.outputs.prerelease }}
       prerelease-depth: ${{ steps.get-prerelease-depth.outputs.prerelease_depth }}
+      is-prerelease: ${{ contains(steps.version.outputs.prerelease, '-') }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -51,36 +52,40 @@ jobs:
         tag-prefix: v
         default-pre-release-phase: preview
 
-    - name: echo version #version major minor patch prerelease
+    - name: Echo version #version major minor patch prerelease
       run: |
         echo Version: ${{ steps.version.outputs.version }}
         echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
         echo prerelease: ${{ steps.version.outputs.prerelease }}
     
-    - name: get prerelease depth
+    - name: Get prerelease depth
       id: get-prerelease-depth
       run: |
         echo "prerelease_depth=$(echo '${{ steps.version.outputs.prerelease }}' | tr -cd '.' | wc -c | tr -d ' ')" >> "$GITHUB_OUTPUT"
 
-    - run: echo "${{ steps.get-prerelease-depth.outputs.prerelease_depth }}"
+    - name: Echo prerelease depth
+      run: echo "${{ steps.get-prerelease-depth.outputs.prerelease_depth }}"
     
-    # - run: |
-    #     git tag v${{ steps.version.outputs.version }}
-    #     git push --tags
+    - name: Tag version
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        git tag v${{ steps.version.outputs.version }}
+        git push --tags
 
     # Update unstable tag on main branch
-    - name: unstable tag
+    - name: Tag unstable
       if: ${{ github.ref == 'refs/heads/main' }}
       uses: EndBug/latest-tag@v1.5.1
       with:
         ref: unstable
 
     # Update latest tag on main branch when tagged RTM
-    - name: latest tag
+    - name: Tag latest
       if: ${{ github.ref == 'refs/heads/main' && steps.version.outputs.prerelease == '' }}
       uses: EndBug/latest-tag@v1.5.1
 
-    # - name: Version tag
+    # - name: Tag version
+    #   if: ${{ github.ref == 'refs/heads/main' }}
     #   uses: EndBug/latest-tag@v1.5.1
     #   with:
     #     ref: v${{ steps.version.outputs.version }}

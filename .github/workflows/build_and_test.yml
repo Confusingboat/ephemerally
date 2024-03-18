@@ -1,4 +1,4 @@
-name: Build & Test
+name: Build, Test, Release
 
 on:
   workflow_dispatch:
@@ -68,16 +68,6 @@ jobs:
         name: test-results
         path: ${{ env.ArtifactDirectory }}/**/*.trx
 
-    # - name: Test Results Comment
-    #   if: always()
-    #   uses: im-open/process-dotnet-test-results@v2.4
-    #   with:
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
-    #     timezone: ${{ env.TIMEZONE }}
-    #     create-status-check: false
-    #     create-pr-comment: true
-    #     comment-identifier: 'TestResults'
-
   # Cosmos DB Emulator is broken on Ubuntu
   # https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/56
 
@@ -140,16 +130,6 @@ jobs:
       with:
         name: cosmos-test-results
         path: ${{ env.ArtifactDirectory }}/**/*.trx
-
-    # - name: Test Results Comment
-    #   if: always()
-    #   uses: im-open/process-dotnet-test-results@v2.4
-    #   with:
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
-    #     timezone: ${{ env.TIMEZONE }}
-    #     create-status-check: false
-    #     create-pr-comment: true
-    #     comment-identifier: 'CosmosTestResults'
 
   test_results_comment:
     runs-on: ubuntu-latest

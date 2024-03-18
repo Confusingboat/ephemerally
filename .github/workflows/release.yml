@@ -1,4 +1,4 @@
-name: Release
+name: Pack & Release
 
 on:
   workflow_call:
@@ -6,6 +6,9 @@ on:
       version:
         required: true
         type: string
+      is-prerelease:
+        required: true
+        type: boolean
     secrets:
       NUGET_ORG_API_KEY:
         required: true
@@ -54,7 +57,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ inputs.version }}
-          prerelease: ${{ contains(inputs.version, '-') }}
+          prerelease: ${{ inputs.is-prerelease }}
           artifacts: "${{ env.ArtifactDirectory }}/*.nupkg"
       
       - name: Publish to pkg.github.com
