@@ -157,7 +157,7 @@ jobs:
         comment-identifier: 'TestResults'
 
   tag:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' }}a
     uses: ./.github/workflows/tag.yml
 
   test-tag-output:

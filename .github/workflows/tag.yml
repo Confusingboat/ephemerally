@@ -36,8 +36,8 @@ jobs:
       minor: ${{ steps.version.outputs.minor }}
       patch: ${{ steps.version.outputs.patch }}
       prerelease: ${{ steps.version.outputs.prerelease }}
-      prerelease-depth: ${{ steps.get-prerelease-depth.outputs.prerelease_depth }}
-      is-prerelease: ${{ contains(steps.version.outputs.prerelease, '-') }}
+      prerelease-depth: ${{ steps.set-prerelease-depth.outputs.prerelease_depth }}
+      is-prerelease: ${{ steps.set-is-prerelease.is_prerelease }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -58,13 +58,18 @@ jobs:
         echo major: ${{ steps.version.outputs.major }}, minor: ${{ steps.version.outputs.minor }}, patch: ${{ steps.version.outputs.patch }}
         echo prerelease: ${{ steps.version.outputs.prerelease }}
     
-    - name: Get prerelease depth
-      id: get-prerelease-depth
+    - name: Set prerelease depth
+      id: set-prerelease-depth
       run: |
         echo "prerelease_depth=$(echo '${{ steps.version.outputs.prerelease }}' | tr -cd '.' | wc -c | tr -d ' ')" >> "$GITHUB_OUTPUT"
 
     - name: Echo prerelease depth
-      run: echo "${{ steps.get-prerelease-depth.outputs.prerelease_depth }}"
+      run: echo "${{ steps.set-prerelease-depth.outputs.prerelease_depth }}"
+
+    - name: Set is-prerelease
+      id: set-is-prerelease
+      run: |
+        echo "is_prerelease=${{ contains(steps.version.outputs.prerelease, '-') }}" >> "$GITHUB_OUTPUT"
     
     - name: Tag version
       if: ${{ github.ref == 'refs/heads/main' }}
