@@ -23,7 +23,7 @@ on:
         value: ${{ jobs.tag.outputs.prerelease-depth }}
       is-prerelease:
         description: "Boolean string indicating whether the version is a prerelease"
-        value: {{ jobs.tag.outputs.is-prerelease }}
+        value: ${{ jobs.tag.outputs.is-prerelease }}
 
 env:
   #MinVerIgnoreHeight: true
