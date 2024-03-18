@@ -177,5 +177,5 @@ jobs:
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
-      is-prerelease: ${{ needs.tag.outputs.is-prerelease }}
+      is-prerelease: ${{ fromJSON(needs.tag.outputs.is-prerelease) }}
     secrets: inherit
