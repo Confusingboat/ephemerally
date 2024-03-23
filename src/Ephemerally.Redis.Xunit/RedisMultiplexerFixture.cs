@@ -3,33 +3,33 @@ using Xunit;
 
 namespace Ephemerally.Redis.Xunit;
 
-public class RedisMultiplexerFixture<TRedisTestContainerFixture>()
-    : RedisMultiplexerFixture(new TRedisTestContainerFixture())
-    where TRedisTestContainerFixture : IRedisTestContainerFixture, new();
+public class RedisMultiplexerFixture<TEphemeralRedisInstance>()
+    : RedisMultiplexerFixture(new TEphemeralRedisInstance())
+    where TEphemeralRedisInstance : IEphemeralRedisFixture, new();
 
 public class RedisMultiplexerFixture : IAsyncLifetime
 {
-    private readonly IRedisTestContainerFixture _containerFixture;
+    private readonly IEphemeralRedisFixture _redisFixture;
     private readonly Lazy<Task<IConnectionMultiplexer>> _multiplexer;
 
     public IConnectionMultiplexer Multiplexer => _multiplexer.Value.Result;
 
     protected Task<IConnectionMultiplexer> GetMultiplexer() => _multiplexer.Value;
 
-    public RedisMultiplexerFixture() : this(UnmanagedTestContainerFixture.Instance) { }
+    public RedisMultiplexerFixture() : this(UnmanagedFixture.Fixture) { }
 
-    protected RedisMultiplexerFixture(IRedisTestContainerFixture containerFixture)
+    protected RedisMultiplexerFixture(IEphemeralRedisFixture redisFixture)
     {
-        _containerFixture = containerFixture;
+        _redisFixture = redisFixture;
         _multiplexer = new Lazy<Task<IConnectionMultiplexer>>(CreateMultiplexerAsync);
     }
 
     protected virtual async Task<IConnectionMultiplexer> CreateMultiplexerAsync() =>
-        await ConnectionMultiplexer.ConnectAsync(_containerFixture.ConnectionString);
+        await ConnectionMultiplexer.ConnectAsync(_redisFixture.ConnectionString);
 
     public virtual async Task InitializeAsync()
     {
-        await _containerFixture.InitializeAsync();
+        await _redisFixture.InitializeAsync();
         await _multiplexer.Value;
     }
 
@@ -39,6 +39,6 @@ public class RedisMultiplexerFixture : IAsyncLifetime
 
         var multiplexer = await GetMultiplexer();
         await multiplexer.DisposeAsync();
-        await _containerFixture.DisposeAsync();
+        await _redisFixture.DisposeAsync();
     }
 }

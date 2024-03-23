@@ -2,21 +2,19 @@
 
 namespace Ephemerally.Redis.Xunit;
 
-public interface IRedisTestContainerFixture : IAsyncLifetime
+public interface IEphemeralRedisFixture : IAsyncLifetime
 {
-    ushort PublicPort { get; }
     string ConnectionString { get; }
 }
 
-public sealed class UnmanagedTestContainerFixture : IRedisTestContainerFixture
+public sealed class UnmanagedFixture : IEphemeralRedisFixture
 {
-    private static readonly Lazy<UnmanagedTestContainerFixture> _instance = new(() => new UnmanagedTestContainerFixture());
+    private static readonly Lazy<UnmanagedFixture> _instance = new(() => new UnmanagedFixture());
 
-    public static UnmanagedTestContainerFixture Instance => _instance.Value;
+    public static UnmanagedFixture Fixture => _instance.Value;
 
-    private UnmanagedTestContainerFixture() { }
+    private UnmanagedFixture() { }
 
-    public ushort PublicPort => DefaultLocalRedisInstance.Port;
     public string ConnectionString => DefaultLocalRedisInstance.ConnectionString;
     public Task InitializeAsync() => Task.CompletedTask;
 

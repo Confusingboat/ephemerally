@@ -6,19 +6,19 @@ namespace Ephemerally.Redis.Tests.Fixtures;
 
 // ReSharper disable once InconsistentNaming
 public class EphemeralRedisDatabaseFixtureTests_6(
-    BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> bigFixture,
-    SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6> smallFixture)
+    BigEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance6> bigFixture,
+    SmallEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance6> smallFixture)
     : EphemeralRedisDatabaseFixtureTests(bigFixture, smallFixture),
-    IClassFixture<BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>,
-    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_6>>;
+    IClassFixture<BigEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance6>>,
+    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance6>>;
 
 // ReSharper disable once InconsistentNaming
 public class EphemeralRedisDatabaseFixtureTests_7(
-        BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_7> bigFixture,
-        SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_7> smallFixture)
+        BigEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance7> bigFixture,
+        SmallEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance7> smallFixture)
     : EphemeralRedisDatabaseFixtureTests(bigFixture, smallFixture),
-    IClassFixture<BigEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_7>>,
-    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<RedisTestContainerFixture_7>>;
+    IClassFixture<BigEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance7>>,
+    IClassFixture<SmallEphemeralRedisDatabasePoolFixture<EphemeralRedisInstance7>>;
 
 [Collection(RedisTestCollection.Name)]
 public abstract class EphemeralRedisDatabaseFixtureTests(
@@ -71,7 +71,7 @@ public abstract class EphemeralRedisDatabaseFixtureTests(
 
 public class BigEphemeralRedisDatabasePoolFixture<TRedisTestContainerFixture>()
     : EphemeralRedisDatabasePoolFixture(new TRedisTestContainerFixture())
-    where TRedisTestContainerFixture : IRedisTestContainerFixture, new()
+    where TRedisTestContainerFixture : IEphemeralRedisFixture, new()
 {
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
@@ -82,7 +82,7 @@ public class BigEphemeralRedisDatabasePoolFixture<TRedisTestContainerFixture>()
 
 public class SmallEphemeralRedisDatabasePoolFixture<TRedisTestContainerFixture>()
     : EphemeralRedisDatabasePoolFixture(new TRedisTestContainerFixture())
-    where TRedisTestContainerFixture : IRedisTestContainerFixture, new()
+    where TRedisTestContainerFixture : IEphemeralRedisFixture, new()
 {
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {

@@ -5,8 +5,8 @@ namespace Ephemerally.Redis.Xunit;
 public class EphemeralRedisDatabasePoolFixture : RedisMultiplexerFixture
 {
     public EphemeralRedisDatabasePoolFixture() { }
-    protected EphemeralRedisDatabasePoolFixture(IRedisTestContainerFixture containerFixture)
-        : base(containerFixture) { }
+    protected EphemeralRedisDatabasePoolFixture(IEphemeralRedisFixture redisFixture)
+        : base(redisFixture) { }
 
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
