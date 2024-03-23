@@ -1,6 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using Ephemerally.Redis.xUnit;
+using Ephemerally.Redis.Xunit;
 
 namespace Ephemerally.Redis.Tests;
 

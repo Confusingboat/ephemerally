@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using Xunit;
 
-namespace Ephemerally.Redis.xUnit;
+namespace Ephemerally.Redis.Xunit;
 
 public class RedisMultiplexerFixture<TEphemeralRedisInstance>()
     : RedisMultiplexerFixture(new TEphemeralRedisInstance())

@@ -1,4 +1,4 @@
-﻿using Ephemerally.Redis.xUnit;
+﻿using Ephemerally.Redis.Xunit;
 
 namespace Ephemerally.Redis.Tests;
 

@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Ephemerally.Redis.xUnit;
+namespace Ephemerally.Redis.Xunit;
 
 public interface IRedisInstance
 {

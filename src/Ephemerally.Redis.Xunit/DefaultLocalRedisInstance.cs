@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-namespace Ephemerally.Redis.xUnit;
+namespace Ephemerally.Redis.Xunit;
 
 public class DefaultLocalRedisInstance
 {

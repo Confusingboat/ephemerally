@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ephemerally.Redis.xUnit;
+namespace Ephemerally.Redis.Xunit;
 
 internal class PooledEphemeralRedisDatabaseFixture : PooledEphemeralRedisMultiplexerFixture
 {
