@@ -22,12 +22,3 @@ public sealed class UnmanagedDefaultLocalRedisInstanceFixture : IRedisInstanceFi
 
     public Task DisposeAsync() => Task.CompletedTask;
 }
-
-public abstract class RedisInstanceFixture : IRedisInstanceFixture
-{
-    public Task InitializeAsync() => throw new NotImplementedException();
-
-    public Task DisposeAsync() => throw new NotImplementedException();
-
-    public string ConnectionString { get; }
-}

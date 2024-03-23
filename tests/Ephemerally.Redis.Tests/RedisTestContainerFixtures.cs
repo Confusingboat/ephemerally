@@ -12,7 +12,7 @@ public abstract class RedisInstanceFixture : TestContainerFixture, IRedisInstanc
 }
 
 // ReSharper disable once InconsistentNaming
-public class RedisInstanceInstance6 : RedisInstanceFixture
+public class RedisInstanceFixture6 : RedisInstanceFixture
 {
     protected override IContainer CreateContainer() =>
         new ContainerBuilder()
@@ -23,7 +23,7 @@ public class RedisInstanceInstance6 : RedisInstanceFixture
 }
 
 // ReSharper disable once InconsistentNaming
-public class RedisInstanceInstance7 : RedisInstanceFixture
+public class RedisInstanceFixture7 : RedisInstanceFixture
 {
     protected override IContainer CreateContainer() =>
         new ContainerBuilder()

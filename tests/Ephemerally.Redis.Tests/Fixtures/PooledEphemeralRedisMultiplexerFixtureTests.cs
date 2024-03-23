@@ -5,13 +5,13 @@ using StackExchange.Redis;
 namespace Ephemerally.Redis.Tests.Fixtures;
 
 // ReSharper disable once InconsistentNaming
-public class PooledEphemeralRedisDatabaseFixtureTests6 : PooledEphemeralRedisDatabaseFixtureTests<RedisInstanceInstance6>;
+public class PooledEphemeralRedisMultiplexerFixtureTests6 : PooledEphemeralRedisMultiplexerFixtureTests<RedisInstanceFixture6>;
 
 // ReSharper disable once InconsistentNaming
-public class PooledEphemeralRedisDatabaseFixtureTests7 : PooledEphemeralRedisDatabaseFixtureTests<RedisInstanceInstance7>;
+public class PooledEphemeralRedisMultiplexerFixtureTests7 : PooledEphemeralRedisMultiplexerFixtureTests<RedisInstanceFixture7>;
 
 [Collection(RedisTestCollection.Name)]
-public abstract class PooledEphemeralRedisDatabaseFixtureTests<TRedisFixture> : IAsyncLifetime
+public abstract class PooledEphemeralRedisMultiplexerFixtureTests<TRedisFixture> : IAsyncLifetime
     where TRedisFixture : class, IRedisInstanceFixture, new()
 {
     private readonly PooledEphemeralRedisMultiplexerFixture

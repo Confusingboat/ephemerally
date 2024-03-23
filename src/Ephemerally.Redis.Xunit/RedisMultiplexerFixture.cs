@@ -32,7 +32,6 @@ public class RedisMultiplexerFixture : IAsyncLifetime, IAsyncDisposable
     public virtual async Task InitializeAsync()
     {
         await _redisInstanceFixture.InitializeAsync();
-        await _multiplexer.Value;
     }
 
     public virtual async Task DisposeAsync()
