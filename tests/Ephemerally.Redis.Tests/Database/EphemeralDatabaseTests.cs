@@ -19,7 +19,7 @@ public abstract class EphemeralDatabaseTests(RedisMultiplexerFixture fixture)
 {
     private readonly IConnectionMultiplexer _multiplexer = fixture.Multiplexer;
 
-    [Fact]
+    [RedisFact]
     public async Task Should_return_a_database_and_flush_it()
     {
         // Arrange
@@ -37,7 +37,7 @@ public abstract class EphemeralDatabaseTests(RedisMultiplexerFixture fixture)
         actual.HasValue.ShouldBeFalse();
     }
 
-    [Fact]
+    [RedisFact]
     public async Task User_supplied_database_should_be_flushed()
     {
         // Arrange
@@ -55,7 +55,7 @@ public abstract class EphemeralDatabaseTests(RedisMultiplexerFixture fixture)
         actual.HasValue.ShouldBeFalse();
     }
 
-    [Fact]
+    [RedisFact]
     public async Task Should_not_flush_separate_database()
     {
         // Arrange

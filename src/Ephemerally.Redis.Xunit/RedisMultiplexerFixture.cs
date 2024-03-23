@@ -7,8 +7,10 @@ public class RedisMultiplexerFixture<TEphemeralRedisInstance>()
     : RedisMultiplexerFixture(new TEphemeralRedisInstance())
     where TEphemeralRedisInstance : IEphemeralRedisFixture, new();
 
-public class RedisMultiplexerFixture : IAsyncLifetime
+public class RedisMultiplexerFixture : IAsyncLifetime, IAsyncDisposable
 {
+    private bool _disposed;
+
     private readonly IEphemeralRedisFixture _redisFixture;
     private readonly Lazy<Task<IConnectionMultiplexer>> _multiplexer;
 
@@ -35,10 +37,21 @@ public class RedisMultiplexerFixture : IAsyncLifetime
 
     public virtual async Task DisposeAsync()
     {
+        if (_disposed) return;
+        _disposed = true;
+
         if (!_multiplexer.IsValueCreated) return;
 
         var multiplexer = await GetMultiplexer();
         await multiplexer.DisposeAsync();
         await _redisFixture.DisposeAsync();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        
+        await DisposeAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Frozen;
 
 namespace Ephemerally.Redis;
@@ -6,27 +7,44 @@ namespace Ephemerally.Redis;
 public class FixedSizeObjectPool<T>
 {
     private readonly FrozenDictionary<T, SemaphoreSlim> _objects;
-    private readonly BlockingCollection<T> _availableObjects;
 
     public IEnumerable<T> Objects => _objects.Keys;
 
     public FixedSizeObjectPool(ICollection<T> objects)
     {
-        _objects = objects.ToFrozenDictionary(x => x, _ => new SemaphoreSlim(1, 1));
-        _availableObjects = new BlockingCollection<T>(objects.Count);
-        foreach (var obj in objects)
-        {
-            _availableObjects.Add(obj);
-        }
+        _objects = objects
+            .GroupBy(x => x)
+            .Select(x => (x.Key, Count: x.Count()))
+            .ToFrozenDictionary(x => x.Key, x => new SemaphoreSlim(x.Count, x.Count));
     }
 
-    public T Get()
+    public T Get() => GetWhere(x => true);
+
+    public T GetWhere(Func<T, bool> predicate)
     {
-        var obj = _availableObjects.Take();
+        var candidates = _objects
+            .Where(kv => predicate(kv.Key))
+            .Select(kv => (Obj: kv.Key, WaitHandle: kv.Value.AvailableWaitHandle))
+            .ToList();
+
+        if (candidates.Count == 0)
+            throw new ObjectNotFromPoolException();
+
+        var candidateIndex = WaitHandle.WaitAny(
+            candidates
+                .Select(x => x.WaitHandle)
+                .ToArray());
+
+        return GetInternal(candidates[candidateIndex].Obj);
+    }
+
+    private T GetInternal(T obj)
+    {
         if (!_objects.TryGetValue(obj, out var semaphore))
             throw new ObjectNotFromPoolException();
 
         semaphore.Wait();
+
         return obj;
     }
 
@@ -43,10 +61,6 @@ public class FixedSizeObjectPool<T>
         {
             throw new ObjectAlreadyReturnedException();
         }
-            
-
-        if (!_availableObjects.TryAdd(obj))
-            throw new ObjectAlreadyReturnedException();
     }
 }
 

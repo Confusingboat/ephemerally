@@ -9,21 +9,21 @@ public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
 {
     private bool _disposed;
 
-    private readonly IConnectionMultiplexer _multiplexer;
-
     private readonly FixedSizeObjectPool<IDatabase> _databases;
 
-    public EphemeralConnectionMultiplexer(IConnectionMultiplexer multiplexer)
-        : this(multiplexer, Enumerable.Range(0, 16).ToArray()) { }
+    public IConnectionMultiplexer UnderlyingMultiplexer { get; }
+
+    public EphemeralConnectionMultiplexer(IConnectionMultiplexer underlyingMultiplexer)
+        : this(underlyingMultiplexer, Enumerable.Range(0, 16).ToArray()) { }
 
     public EphemeralConnectionMultiplexer(
-        IConnectionMultiplexer multiplexer,
+        IConnectionMultiplexer underlyingMultiplexer,
         int[] databases)
     {
-        _multiplexer = multiplexer;
+        UnderlyingMultiplexer = underlyingMultiplexer;
         _databases = new(
             databases
-                .Select(db => (IDatabase)multiplexer.GetDatabase(db).ToEphemeral())
+                .Select(db => (IDatabase)underlyingMultiplexer.GetDatabase(db).ToEphemeral())
                 .ToList());
     }
 
@@ -42,7 +42,7 @@ public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
         {
             _disposed = true;
 
-            _multiplexer.Dispose();
+            UnderlyingMultiplexer.Dispose();
         }
     }
 
@@ -63,144 +63,150 @@ public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
         {
             _disposed = true;
 
-            await _multiplexer.DisposeAsync();
+            await UnderlyingMultiplexer.DisposeAsync();
         }
     }
 
     #region Decorated Members
 
-    public IDatabase GetDatabase(int db = -1, object asyncState = null) => new PooledRedisDatabase(_databases, _databases.Get());
+    public IDatabase GetDatabase(int db = -1, object asyncState = null) =>
+        new PooledRedisDatabase(
+            _databases,
+            db == -1
+                ? _databases.Get()
+                : _databases.GetWhere(x => x.Database == db)
+            );
 
     #endregion
 
     #region Delegated IConnectionMultiplexer Members
 
-    public void RegisterProfiler(Func<ProfilingSession> profilingSessionProvider) => _multiplexer.RegisterProfiler(profilingSessionProvider);
+    public void RegisterProfiler(Func<ProfilingSession> profilingSessionProvider) => UnderlyingMultiplexer.RegisterProfiler(profilingSessionProvider);
 
-    public ServerCounters GetCounters() => _multiplexer.GetCounters();
+    public ServerCounters GetCounters() => UnderlyingMultiplexer.GetCounters();
 
-    public EndPoint[] GetEndPoints(bool configuredOnly = false) => _multiplexer.GetEndPoints(configuredOnly);
+    public EndPoint[] GetEndPoints(bool configuredOnly = false) => UnderlyingMultiplexer.GetEndPoints(configuredOnly);
 
-    public void Wait(Task task) => _multiplexer.Wait(task);
+    public void Wait(Task task) => UnderlyingMultiplexer.Wait(task);
 
-    public T Wait<T>(Task<T> task) => _multiplexer.Wait(task);
+    public T Wait<T>(Task<T> task) => UnderlyingMultiplexer.Wait(task);
 
-    public void WaitAll(params Task[] tasks) => _multiplexer.WaitAll(tasks);
+    public void WaitAll(params Task[] tasks) => UnderlyingMultiplexer.WaitAll(tasks);
 
-    public int HashSlot(RedisKey key) => _multiplexer.HashSlot(key);
+    public int HashSlot(RedisKey key) => UnderlyingMultiplexer.HashSlot(key);
 
-    public ISubscriber GetSubscriber(object asyncState = null) => _multiplexer.GetSubscriber(asyncState);
+    public ISubscriber GetSubscriber(object asyncState = null) => UnderlyingMultiplexer.GetSubscriber(asyncState);
 
-    public IServer GetServer(string host, int port, object asyncState = null) => _multiplexer.GetServer(host, port, asyncState);
+    public IServer GetServer(string host, int port, object asyncState = null) => UnderlyingMultiplexer.GetServer(host, port, asyncState);
 
-    public IServer GetServer(string hostAndPort, object asyncState = null) => _multiplexer.GetServer(hostAndPort, asyncState);
+    public IServer GetServer(string hostAndPort, object asyncState = null) => UnderlyingMultiplexer.GetServer(hostAndPort, asyncState);
 
-    public IServer GetServer(IPAddress host, int port) => _multiplexer.GetServer(host, port);
+    public IServer GetServer(IPAddress host, int port) => UnderlyingMultiplexer.GetServer(host, port);
 
-    public IServer GetServer(EndPoint endpoint, object asyncState = null) => _multiplexer.GetServer(endpoint, asyncState);
+    public IServer GetServer(EndPoint endpoint, object asyncState = null) => UnderlyingMultiplexer.GetServer(endpoint, asyncState);
 
-    public IServer[] GetServers() => _multiplexer.GetServers();
+    public IServer[] GetServers() => UnderlyingMultiplexer.GetServers();
 
-    public Task<bool> ConfigureAsync(TextWriter log = null) => _multiplexer.ConfigureAsync(log);
+    public Task<bool> ConfigureAsync(TextWriter log = null) => UnderlyingMultiplexer.ConfigureAsync(log);
 
-    public bool Configure(TextWriter log = null) => _multiplexer.Configure(log);
+    public bool Configure(TextWriter log = null) => UnderlyingMultiplexer.Configure(log);
 
-    public string GetStatus() => _multiplexer.GetStatus();
+    public string GetStatus() => UnderlyingMultiplexer.GetStatus();
 
-    public void GetStatus(TextWriter log) => _multiplexer.GetStatus(log);
+    public void GetStatus(TextWriter log) => UnderlyingMultiplexer.GetStatus(log);
 
-    public void Close(bool allowCommandsToComplete = true) => _multiplexer.Close(allowCommandsToComplete);
+    public void Close(bool allowCommandsToComplete = true) => UnderlyingMultiplexer.Close(allowCommandsToComplete);
 
-    public Task CloseAsync(bool allowCommandsToComplete = true) => _multiplexer.CloseAsync(allowCommandsToComplete);
+    public Task CloseAsync(bool allowCommandsToComplete = true) => UnderlyingMultiplexer.CloseAsync(allowCommandsToComplete);
 
-    public string GetStormLog() => _multiplexer.GetStormLog();
+    public string GetStormLog() => UnderlyingMultiplexer.GetStormLog();
 
-    public void ResetStormLog() => _multiplexer.ResetStormLog();
+    public void ResetStormLog() => UnderlyingMultiplexer.ResetStormLog();
 
-    public long PublishReconfigure(CommandFlags flags = CommandFlags.None) => _multiplexer.PublishReconfigure(flags);
+    public long PublishReconfigure(CommandFlags flags = CommandFlags.None) => UnderlyingMultiplexer.PublishReconfigure(flags);
 
-    public Task<long> PublishReconfigureAsync(CommandFlags flags = CommandFlags.None) => _multiplexer.PublishReconfigureAsync(flags);
+    public Task<long> PublishReconfigureAsync(CommandFlags flags = CommandFlags.None) => UnderlyingMultiplexer.PublishReconfigureAsync(flags);
 
-    public int GetHashSlot(RedisKey key) => _multiplexer.GetHashSlot(key);
+    public int GetHashSlot(RedisKey key) => UnderlyingMultiplexer.GetHashSlot(key);
 
-    public void ExportConfiguration(Stream destination, ExportOptions options = ExportOptions.All) => _multiplexer.ExportConfiguration(destination, options);
+    public void ExportConfiguration(Stream destination, ExportOptions options = ExportOptions.All) => UnderlyingMultiplexer.ExportConfiguration(destination, options);
 
-    public string ClientName => _multiplexer.ClientName;
+    public string ClientName => UnderlyingMultiplexer.ClientName;
 
-    public string Configuration => _multiplexer.Configuration;
+    public string Configuration => UnderlyingMultiplexer.Configuration;
 
-    public int TimeoutMilliseconds => _multiplexer.TimeoutMilliseconds;
+    public int TimeoutMilliseconds => UnderlyingMultiplexer.TimeoutMilliseconds;
 
-    public long OperationCount => _multiplexer.OperationCount;
+    public long OperationCount => UnderlyingMultiplexer.OperationCount;
 
     public bool PreserveAsyncOrder
     {
-        get => _multiplexer.PreserveAsyncOrder;
-        set => _multiplexer.PreserveAsyncOrder = value;
+        get => UnderlyingMultiplexer.PreserveAsyncOrder;
+        set => UnderlyingMultiplexer.PreserveAsyncOrder = value;
     }
 
-    public bool IsConnected => _multiplexer.IsConnected;
+    public bool IsConnected => UnderlyingMultiplexer.IsConnected;
 
-    public bool IsConnecting => _multiplexer.IsConnecting;
+    public bool IsConnecting => UnderlyingMultiplexer.IsConnecting;
 
     public bool IncludeDetailInExceptions
     {
-        get => _multiplexer.IncludeDetailInExceptions;
-        set => _multiplexer.IncludeDetailInExceptions = value;
+        get => UnderlyingMultiplexer.IncludeDetailInExceptions;
+        set => UnderlyingMultiplexer.IncludeDetailInExceptions = value;
     }
 
     public int StormLogThreshold
     {
-        get => _multiplexer.StormLogThreshold;
-        set => _multiplexer.StormLogThreshold = value;
+        get => UnderlyingMultiplexer.StormLogThreshold;
+        set => UnderlyingMultiplexer.StormLogThreshold = value;
     }
 
     public event EventHandler<RedisErrorEventArgs> ErrorMessage
     {
-        add => _multiplexer.ErrorMessage += value;
-        remove => _multiplexer.ErrorMessage -= value;
+        add => UnderlyingMultiplexer.ErrorMessage += value;
+        remove => UnderlyingMultiplexer.ErrorMessage -= value;
     }
 
     public event EventHandler<ConnectionFailedEventArgs> ConnectionFailed
     {
-        add => _multiplexer.ConnectionFailed += value;
-        remove => _multiplexer.ConnectionFailed -= value;
+        add => UnderlyingMultiplexer.ConnectionFailed += value;
+        remove => UnderlyingMultiplexer.ConnectionFailed -= value;
     }
 
     public event EventHandler<InternalErrorEventArgs> InternalError
     {
-        add => _multiplexer.InternalError += value;
-        remove => _multiplexer.InternalError -= value;
+        add => UnderlyingMultiplexer.InternalError += value;
+        remove => UnderlyingMultiplexer.InternalError -= value;
     }
 
     public event EventHandler<ConnectionFailedEventArgs> ConnectionRestored
     {
-        add => _multiplexer.ConnectionRestored += value;
-        remove => _multiplexer.ConnectionRestored -= value;
+        add => UnderlyingMultiplexer.ConnectionRestored += value;
+        remove => UnderlyingMultiplexer.ConnectionRestored -= value;
     }
 
     public event EventHandler<EndPointEventArgs> ConfigurationChanged
     {
-        add => _multiplexer.ConfigurationChanged += value;
-        remove => _multiplexer.ConfigurationChanged -= value;
+        add => UnderlyingMultiplexer.ConfigurationChanged += value;
+        remove => UnderlyingMultiplexer.ConfigurationChanged -= value;
     }
 
     public event EventHandler<EndPointEventArgs> ConfigurationChangedBroadcast
     {
-        add => _multiplexer.ConfigurationChangedBroadcast += value;
-        remove => _multiplexer.ConfigurationChangedBroadcast -= value;
+        add => UnderlyingMultiplexer.ConfigurationChangedBroadcast += value;
+        remove => UnderlyingMultiplexer.ConfigurationChangedBroadcast -= value;
     }
 
     public event EventHandler<ServerMaintenanceEvent> ServerMaintenanceEvent
     {
-        add => _multiplexer.ServerMaintenanceEvent += value;
-        remove => _multiplexer.ServerMaintenanceEvent -= value;
+        add => UnderlyingMultiplexer.ServerMaintenanceEvent += value;
+        remove => UnderlyingMultiplexer.ServerMaintenanceEvent -= value;
     }
 
     public event EventHandler<HashSlotMovedEventArgs> HashSlotMoved
     {
-        add => _multiplexer.HashSlotMoved += value;
-        remove => _multiplexer.HashSlotMoved -= value;
+        add => UnderlyingMultiplexer.HashSlotMoved += value;
+        remove => UnderlyingMultiplexer.HashSlotMoved -= value;
     }
 
     #endregion

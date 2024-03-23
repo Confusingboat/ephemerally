@@ -8,9 +8,12 @@ public class EphemeralRedisDatabasePoolFixture : RedisMultiplexerFixture
     protected EphemeralRedisDatabasePoolFixture(IEphemeralRedisFixture redisFixture)
         : base(redisFixture) { }
 
-    protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
+    protected sealed override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
         var implementation = await base.CreateMultiplexerAsync();
-        return new EphemeralConnectionMultiplexer(implementation);
+        return await CreateMultiplexerAsync(implementation);
     }
+
+    protected virtual Task<EphemeralConnectionMultiplexer> CreateMultiplexerAsync(IConnectionMultiplexer implementation) =>
+        Task.FromResult(new EphemeralConnectionMultiplexer(implementation));
 }
