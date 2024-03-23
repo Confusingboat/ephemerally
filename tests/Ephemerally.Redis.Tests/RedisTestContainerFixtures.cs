@@ -1,10 +1,10 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using Ephemerally.Redis.Xunit;
+using Ephemerally.Redis.xUnit;
 
 namespace Ephemerally.Redis.Tests;
 
-public abstract class EphemeralRedisFixture : TestContainerFixture, IEphemeralRedisFixture
+public abstract class RedisInstanceFixture : TestContainerFixture, IRedisInstanceFixture
 {
     public ushort PublicPort => Container.GetMappedPublicPort(6379);
 
@@ -12,7 +12,7 @@ public abstract class EphemeralRedisFixture : TestContainerFixture, IEphemeralRe
 }
 
 // ReSharper disable once InconsistentNaming
-public class EphemeralRedisInstance6 : EphemeralRedisFixture
+public class RedisInstanceInstance6 : RedisInstanceFixture
 {
     protected override IContainer CreateContainer() =>
         new ContainerBuilder()
@@ -23,7 +23,7 @@ public class EphemeralRedisInstance6 : EphemeralRedisFixture
 }
 
 // ReSharper disable once InconsistentNaming
-public class EphemeralRedisInstance7 : EphemeralRedisFixture
+public class RedisInstanceInstance7 : RedisInstanceFixture
 {
     protected override IContainer CreateContainer() =>
         new ContainerBuilder()

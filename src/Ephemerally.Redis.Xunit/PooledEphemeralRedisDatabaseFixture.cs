@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ephemerally.Redis.Xunit;
+namespace Ephemerally.Redis.xUnit;
 
-internal class EphemeralRedisDatabaseFixture : EphemeralRedisDatabasePoolFixture
+internal class PooledEphemeralRedisDatabaseFixture : PooledEphemeralRedisMultiplexerFixture
 {
     private readonly Lazy<Task<IEphemeralRedisDatabase>> _database;
 
     public IEphemeralRedisDatabase Database => _database.Value.Result;
 
-    public EphemeralRedisDatabaseFixture()
+    public PooledEphemeralRedisDatabaseFixture()
     {
         _database = new(CreateDatabaseAsync);
     }  

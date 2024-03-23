@@ -5,33 +5,39 @@ using StackExchange.Redis.Profiling;
 
 namespace Ephemerally.Redis;
 
-public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
+public class EphemeralConnectionMultiplexer(IConnectionMultiplexer underlyingMultiplexer)
+    : ConnectionMultiplexerDecorator(underlyingMultiplexer)
+{
+    public override IDatabase GetDatabase(int db = -1, object asyncState = null) => 
+        UnderlyingMultiplexer.GetDatabase(db, asyncState).AsEphemeral();
+}
+
+public class PooledConnectionMultiplexer : ConnectionMultiplexerDecorator
 {
     private bool _disposed;
 
     private readonly FixedSizeObjectPool<IDatabase> _databases;
 
-    public IConnectionMultiplexer UnderlyingMultiplexer { get; }
-
-    public EphemeralConnectionMultiplexer(IConnectionMultiplexer underlyingMultiplexer)
+    public PooledConnectionMultiplexer(IConnectionMultiplexer underlyingMultiplexer)
         : this(underlyingMultiplexer, Enumerable.Range(0, 16).ToArray()) { }
 
-    public EphemeralConnectionMultiplexer(
+    public PooledConnectionMultiplexer(
         IConnectionMultiplexer underlyingMultiplexer,
-        int[] databases)
+        int[] databases) : base(underlyingMultiplexer)
     {
-        UnderlyingMultiplexer = underlyingMultiplexer;
         _databases = new(
             databases
-                .Select(db => (IDatabase)underlyingMultiplexer.GetDatabase(db).ToEphemeral())
+                .Select(db => underlyingMultiplexer.GetDatabase(db))
                 .ToList());
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         try
         {
             if (_disposed) return;
+
+            _disposed = true;
 
             foreach (var db in _databases.Objects)
             {
@@ -40,17 +46,17 @@ public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
         }
         finally
         {
-            _disposed = true;
-
-            UnderlyingMultiplexer.Dispose();
+            base.Dispose();
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         try
         {
             if (_disposed) return;
+
+            _disposed = true;
 
             await Task.WhenAll(
                 _databases
@@ -61,21 +67,52 @@ public class EphemeralConnectionMultiplexer : IConnectionMultiplexer
         }
         finally
         {
-            _disposed = true;
-
-            await UnderlyingMultiplexer.DisposeAsync();
+            await base.DisposeAsync();
         }
     }
 
     #region Decorated Members
 
-    public IDatabase GetDatabase(int db = -1, object asyncState = null) =>
+    public override IDatabase GetDatabase(int db = -1, object asyncState = null) =>
         new PooledRedisDatabase(
             _databases,
             db == -1
                 ? _databases.Get()
                 : _databases.GetWhere(x => x.Database == db)
-            );
+        );
+
+    #endregion
+}
+
+public abstract class ConnectionMultiplexerDecorator(IConnectionMultiplexer underlyingMultiplexer)
+    : IConnectionMultiplexer
+{
+    private bool _disposed;
+
+    public IConnectionMultiplexer UnderlyingMultiplexer { get; } = underlyingMultiplexer;
+
+    public virtual void Dispose()
+    {
+        if (_disposed) return;
+
+        _disposed = true;
+
+        UnderlyingMultiplexer.Dispose();
+    }
+
+    public virtual ValueTask DisposeAsync()
+    {
+        if (_disposed) return new();
+
+        _disposed = true;
+
+        return UnderlyingMultiplexer.DisposeAsync();
+    }
+
+
+    #region Decorated Members
+
+    public virtual IDatabase GetDatabase(int db = -1, object asyncState = null) => UnderlyingMultiplexer.GetDatabase(db, asyncState);
 
     #endregion
 

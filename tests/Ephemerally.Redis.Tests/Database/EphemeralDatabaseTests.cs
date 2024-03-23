@@ -1,4 +1,4 @@
-using Ephemerally.Redis.Xunit;
+using Ephemerally.Redis.xUnit;
 using StackExchange.Redis;
 using Shouldly;
 

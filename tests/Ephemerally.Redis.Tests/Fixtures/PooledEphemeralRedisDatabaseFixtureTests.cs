@@ -1,22 +1,22 @@
-﻿using Ephemerally.Redis.Xunit;
+﻿using Ephemerally.Redis.xUnit;
 using Shouldly;
 using StackExchange.Redis;
 
 namespace Ephemerally.Redis.Tests.Fixtures;
 
 // ReSharper disable once InconsistentNaming
-public class EphemeralRedisDatabaseFixtureTests_6 : EphemeralRedisDatabaseFixtureTests<EphemeralRedisInstance6>;
+public class PooledEphemeralRedisDatabaseFixtureTests6 : PooledEphemeralRedisDatabaseFixtureTests<RedisInstanceInstance6>;
 
 // ReSharper disable once InconsistentNaming
-public class EphemeralRedisDatabaseFixtureTests_7 : EphemeralRedisDatabaseFixtureTests<EphemeralRedisInstance7>;
+public class PooledEphemeralRedisDatabaseFixtureTests7 : PooledEphemeralRedisDatabaseFixtureTests<RedisInstanceInstance7>;
 
 [Collection(RedisTestCollection.Name)]
-public abstract class EphemeralRedisDatabaseFixtureTests<TRedisFixture> : IAsyncLifetime
-    where TRedisFixture : class, IEphemeralRedisFixture, new()
+public abstract class PooledEphemeralRedisDatabaseFixtureTests<TRedisFixture> : IAsyncLifetime
+    where TRedisFixture : class, IRedisInstanceFixture, new()
 {
-    private readonly EphemeralRedisDatabasePoolFixture
-        _bigFixture = new BigEphemeralRedisDatabasePoolFixture<TRedisFixture>(),
-        _smallFixture = new SmallEphemeralRedisDatabasePoolFixture<TRedisFixture>();
+    private readonly PooledEphemeralRedisMultiplexerFixture
+        _bigFixture = new BigPooledEphemeralRedisMultiplexerFixture<TRedisFixture>(),
+        _smallFixture = new SmallPooledEphemeralRedisMultiplexerFixture<TRedisFixture>();
 
     [RedisFact]
     public async Task Create_database_gets_a_new_database_every_time()
@@ -133,11 +133,11 @@ public abstract class EphemeralRedisDatabaseFixtureTests<TRedisFixture> : IAsync
         }
     }
 
-    private class InTestRedisFixture(TRedisFixture redis, int[] databases) : EphemeralRedisDatabasePoolFixture(redis)
+    private class InTestRedisFixture(TRedisFixture redis, int[] databases) : PooledEphemeralRedisMultiplexerFixture(redis)
     {
-        protected override Task<EphemeralConnectionMultiplexer> CreateMultiplexerAsync(IConnectionMultiplexer implementation)
+        protected override Task<PooledConnectionMultiplexer> CreatePooledMultiplexerAsync(IConnectionMultiplexer implementation)
         {
-            return Task.FromResult(new EphemeralConnectionMultiplexer(implementation, databases));
+            return Task.FromResult(new PooledConnectionMultiplexer(implementation, databases));
         }
     }
 
@@ -158,23 +158,23 @@ public abstract class EphemeralRedisDatabaseFixtureTests<TRedisFixture> : IAsync
     #endregion
 }
 
-public class BigEphemeralRedisDatabasePoolFixture<TRedisFixture>()
-    : EphemeralRedisDatabasePoolFixture(new TRedisFixture())
-    where TRedisFixture : IEphemeralRedisFixture, new()
+public class BigPooledEphemeralRedisMultiplexerFixture<TRedisFixture>()
+    : PooledEphemeralRedisMultiplexerFixture(new TRedisFixture())
+    where TRedisFixture : IRedisInstanceFixture, new()
 {
-    protected override Task<EphemeralConnectionMultiplexer> CreateMultiplexerAsync(IConnectionMultiplexer implementation)
+    protected override Task<PooledConnectionMultiplexer> CreatePooledMultiplexerAsync(IConnectionMultiplexer implementation)
     {
-        return Task.FromResult(new EphemeralConnectionMultiplexer(implementation, [0, 1, 2, 3]));
+        return Task.FromResult(new PooledConnectionMultiplexer(implementation, [0, 1, 2, 3]));
     }
 }
 
-public class SmallEphemeralRedisDatabasePoolFixture<TRedisFixture>()
-    : EphemeralRedisDatabasePoolFixture(new TRedisFixture())
-    where TRedisFixture : IEphemeralRedisFixture, new()
+public class SmallPooledEphemeralRedisMultiplexerFixture<TRedisFixture>()
+    : PooledEphemeralRedisMultiplexerFixture(new TRedisFixture())
+    where TRedisFixture : IRedisInstanceFixture, new()
 {
-    protected override Task<EphemeralConnectionMultiplexer> CreateMultiplexerAsync(IConnectionMultiplexer implementation)
+    protected override Task<PooledConnectionMultiplexer> CreatePooledMultiplexerAsync(IConnectionMultiplexer implementation)
     {
-        return Task.FromResult(new EphemeralConnectionMultiplexer(implementation, [0, 1]));
+        return Task.FromResult(new PooledConnectionMultiplexer(implementation, [0, 1]));
     }
 }
 

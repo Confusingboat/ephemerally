@@ -19,19 +19,24 @@ public static class PublicExtensions
         int db = -1) =>
         multiplexer.GetDatabase(db).AsEphemeral();
 
+    #region EphemeralConnectionMultiplexer
+
     public static EphemeralConnectionMultiplexer AsEphemeralMultiplexer(this IConnectionMultiplexer multiplexer) =>
-        multiplexer is EphemeralConnectionMultiplexer connectionMultiplexer
-            ? connectionMultiplexer
-            : multiplexer.ToEphemeralMultiplexer();
+        multiplexer as EphemeralConnectionMultiplexer ?? multiplexer.ToEphemeralMultiplexer();
 
     public static EphemeralConnectionMultiplexer ToEphemeralMultiplexer(this IConnectionMultiplexer multiplexer) =>
         new(multiplexer);
 
-    public static async Task<EphemeralConnectionMultiplexer> AsEphemeralMultiplexer<T>(this Task<T> creatingMultiplexer)
-        where T : IConnectionMultiplexer =>
-        (await creatingMultiplexer.ConfigureAwait(false)).AsEphemeralMultiplexer();
+    #endregion
 
-    public static async Task<EphemeralConnectionMultiplexer> ToEphemeralMultiplexer<T>(this Task<T> creatingMultiplexer)
-        where T : IConnectionMultiplexer =>
-        (await creatingMultiplexer.ConfigureAwait(false)).ToEphemeralMultiplexer();
+    #region PooledConnectionMultiplexer
+
+    public static PooledConnectionMultiplexer AsPooledMultiplexer(this IConnectionMultiplexer multiplexer) =>
+        multiplexer as PooledConnectionMultiplexer ?? multiplexer.ToPooledMultiplexer();
+
+    public static PooledConnectionMultiplexer ToPooledMultiplexer(this IConnectionMultiplexer multiplexer) =>
+        new(multiplexer);
+   
+
+    #endregion
 }
