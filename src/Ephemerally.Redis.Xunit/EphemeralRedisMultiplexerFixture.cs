@@ -12,6 +12,8 @@ public class EphemeralRedisMultiplexerFixture : RedisMultiplexerFixture
     protected EphemeralRedisMultiplexerFixture(IRedisInstanceFixture redisInstanceFixture)
         : base(redisInstanceFixture) { }
 
+    public IEphemeralRedisDatabase GetDatabase(int db = -1) => Multiplexer.GetDatabase() as IEphemeralRedisDatabase;
+
     protected override async Task<IConnectionMultiplexer> CreateMultiplexerAsync()
     {
         var implementation = await base.CreateMultiplexerAsync();
