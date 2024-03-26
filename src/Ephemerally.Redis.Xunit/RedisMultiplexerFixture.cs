@@ -3,42 +3,54 @@ using Xunit;
 
 namespace Ephemerally.Redis.Xunit;
 
-public class RedisMultiplexerFixture<TRedisTestContainerFixture>()
-    : RedisMultiplexerFixture(new TRedisTestContainerFixture())
-    where TRedisTestContainerFixture : IRedisTestContainerFixture, new();
+public class RedisMultiplexerFixture<TEphemeralRedisInstance>()
+    : RedisMultiplexerFixture(new TEphemeralRedisInstance())
+    where TEphemeralRedisInstance : IRedisInstanceFixture, new();
 
-public class RedisMultiplexerFixture : IAsyncLifetime
+public class RedisMultiplexerFixture : IAsyncLifetime, IAsyncDisposable
 {
-    private readonly IRedisTestContainerFixture _containerFixture;
+    private bool _disposed;
+
+    private readonly IRedisInstanceFixture _redisInstanceFixture;
     private readonly Lazy<Task<IConnectionMultiplexer>> _multiplexer;
 
     public IConnectionMultiplexer Multiplexer => _multiplexer.Value.Result;
 
     protected Task<IConnectionMultiplexer> GetMultiplexer() => _multiplexer.Value;
 
-    public RedisMultiplexerFixture() : this(UnmanagedTestContainerFixture.Instance) { }
+    public RedisMultiplexerFixture() : this(UnmanagedDefaultLocalRedisInstanceFixture.DefaultLocalRedisInstanceFixture) { }
 
-    protected RedisMultiplexerFixture(IRedisTestContainerFixture containerFixture)
+    protected RedisMultiplexerFixture(IRedisInstanceFixture redisInstanceFixture)
     {
-        _containerFixture = containerFixture;
+        _redisInstanceFixture = redisInstanceFixture;
         _multiplexer = new Lazy<Task<IConnectionMultiplexer>>(CreateMultiplexerAsync);
     }
 
     protected virtual async Task<IConnectionMultiplexer> CreateMultiplexerAsync() =>
-        await ConnectionMultiplexer.ConnectAsync(_containerFixture.ConnectionString);
+        await ConnectionMultiplexer.ConnectAsync(_redisInstanceFixture.ConnectionString);
 
     public virtual async Task InitializeAsync()
     {
-        await _containerFixture.InitializeAsync();
-        await _multiplexer.Value;
+        await _redisInstanceFixture.InitializeAsync();
     }
 
     public virtual async Task DisposeAsync()
     {
+        if (_disposed) return;
+        _disposed = true;
+
         if (!_multiplexer.IsValueCreated) return;
 
         var multiplexer = await GetMultiplexer();
         await multiplexer.DisposeAsync();
-        await _containerFixture.DisposeAsync();
+        await _redisInstanceFixture.DisposeAsync();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        
+        await DisposeAsync();
     }
 }

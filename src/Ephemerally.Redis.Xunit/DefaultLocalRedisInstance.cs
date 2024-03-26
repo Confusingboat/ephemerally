@@ -8,6 +8,4 @@ public class DefaultLocalRedisInstance
 
 
     public const string ConnectionString = "localhost:6379,allowAdmin=true";
-
-    public static ushort Port => 6379;
 }

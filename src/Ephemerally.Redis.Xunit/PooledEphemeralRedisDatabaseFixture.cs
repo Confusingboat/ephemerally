@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Ephemerally.Redis.Xunit;
 
-internal class EphemeralRedisDatabaseFixture : EphemeralRedisDatabasePoolFixture
+internal class PooledEphemeralRedisDatabaseFixture : PooledEphemeralRedisMultiplexerFixture
 {
     private readonly Lazy<Task<IEphemeralRedisDatabase>> _database;
 
     public IEphemeralRedisDatabase Database => _database.Value.Result;
 
-    public EphemeralRedisDatabaseFixture()
+    public PooledEphemeralRedisDatabaseFixture()
     {
         _database = new(CreateDatabaseAsync);
     }  
