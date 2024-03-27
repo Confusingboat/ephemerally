@@ -6,18 +6,19 @@ namespace Ephemerally;
 
 public static class PublicExtensions
 {
-    public static EphemeralRedisDatabase AsEphemeral(this IDatabase database) =>
-        database is null or EphemeralRedisDatabase
-            ? (EphemeralRedisDatabase)database
+    public static IEphemeralRedisDatabase AsEphemeral(this IDatabase database) =>
+        database is null or IEphemeralRedisDatabase
+            ? (IEphemeralRedisDatabase)database
             : database.ToEphemeral();
 
-    public static EphemeralRedisDatabase ToEphemeral(this IDatabase database) =>
-        new(new RedisDatabaseEphemeral(database));
+    public static IEphemeralRedisDatabase ToEphemeral(this IDatabase database) =>
+        new EphemeralRedisDatabase(new RedisDatabaseEphemeral(database));
 
-    public static EphemeralRedisDatabase GetEphemeralDatabase(
+    public static IEphemeralRedisDatabase GetEphemeralDatabase(
         this IConnectionMultiplexer multiplexer,
-        int db = -1) =>
-        multiplexer.GetDatabase(db).AsEphemeral();
+        int db = -1,
+        object asyncState = null) =>
+        multiplexer.GetDatabase(db, asyncState).AsEphemeral();
 
     #region EphemeralConnectionMultiplexer
 
