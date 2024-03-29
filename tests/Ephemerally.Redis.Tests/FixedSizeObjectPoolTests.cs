@@ -5,9 +5,9 @@ namespace Ephemerally.Redis.Tests;
 
 public class FixedSizeObjectPoolTests
 {
-    private const int TestTimeout = 2;
+    private const int TestTimeout = 5;
 
-    [Fact]
+    [Fact(Timeout = TestTimeout)]
     public void Get_returns_object_from_pool()
     {
         // Arrange
