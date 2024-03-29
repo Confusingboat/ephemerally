@@ -3,6 +3,7 @@ using Shouldly;
 
 namespace Ephemerally.Redis.Tests;
 
+[Collection(FixedSizeObjectPoolTestCollection.Name)]
 public class FixedSizeObjectPoolTests
 {
     private const int TestTimeout = 5;
@@ -162,4 +163,10 @@ public class FixedSizeObjectPoolTests
         actual.ShouldBe(2);
         await task1;
     }
+}
+
+[CollectionDefinition(Name, DisableParallelization = true)]
+public class FixedSizeObjectPoolTestCollection
+{
+    public const string Name = nameof(FixedSizeObjectPoolTestCollection);
 }
