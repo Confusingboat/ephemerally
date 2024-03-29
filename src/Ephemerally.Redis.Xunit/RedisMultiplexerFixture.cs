@@ -3,11 +3,16 @@ using Xunit;
 
 namespace Ephemerally.Redis.Xunit;
 
+public interface IRedisMultiplexerFixture
+{
+    IConnectionMultiplexer Multiplexer { get; }
+}
+
 public class RedisMultiplexerFixture<TEphemeralRedisInstance>()
     : RedisMultiplexerFixture(new TEphemeralRedisInstance())
     where TEphemeralRedisInstance : IRedisInstanceFixture, new();
 
-public class RedisMultiplexerFixture : IAsyncLifetime, IAsyncDisposable
+public class RedisMultiplexerFixture : IRedisMultiplexerFixture, IAsyncLifetime, IAsyncDisposable
 {
     private bool _disposed;
 
