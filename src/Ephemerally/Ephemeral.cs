@@ -1,12 +1,14 @@
 namespace Ephemerally;
 
+public static class Ephemeral { }
+
 public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     where TValue : class
 {
     private bool _disposed;
 
     private readonly EphemeralOptions _options;
-    private readonly EphemeralMetadata _metadata;
+    private readonly IEphemeralMetadata _metadata;
     private readonly TValue _object;
 
     private string FullName => _metadata.FullName;
@@ -14,10 +16,13 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     public IEphemeralMetadata Metadata => _metadata;
 
     protected Ephemeral(TValue value, Func<TValue, string> getFullName, EphemeralOptions options)
+        : this(value, EphemeralMetadata.Parse(getFullName(value)), options) { }
+
+    protected Ephemeral(TValue value, IEphemeralMetadata metadata, EphemeralOptions options)
     {
         _object = value;
         _options = options;
-        _metadata = EphemeralMetadata.Parse(getFullName(value));
+        _metadata = metadata;
     }
 
     public TValue Value => _object ?? throw new InvalidOperationException("The object has not been created yet.");

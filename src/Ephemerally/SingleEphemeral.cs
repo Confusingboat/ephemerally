@@ -13,7 +13,7 @@ public sealed class SingleEphemeral<T> : Ephemeral<T> where T : class
     public SingleEphemeral(
         T value,
         Func<Task> cleanupSelfAsync) 
-        : base(value, x => string.Empty, new EphemeralOptions { CleanupBehavior = CleanupBehavior.SelfOnly })
+        : base(value, new EphemeralMetadata(), new EphemeralOptions { CleanupBehavior = CleanupBehavior.SelfOnly })
     {
         _cleanupSelfAsync = cleanupSelfAsync;
     }
