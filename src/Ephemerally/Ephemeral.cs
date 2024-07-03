@@ -1,6 +1,11 @@
 namespace Ephemerally;
 
-public static class Ephemeral { }
+public sealed class Ephemeral : IEphemeralExtension
+{
+    public static Ephemeral Create = new();
+}
+
+public interface IEphemeralExtension { }
 
 public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     where TValue : class

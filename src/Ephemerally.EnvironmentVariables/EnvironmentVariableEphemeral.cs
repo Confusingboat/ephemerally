@@ -2,12 +2,18 @@
 
 public class EnvironmentVariableEphemeral : Ephemeral<string>, IDisposable
 {
-    public EnvironmentVariableEphemeral(
-        string value,
-        EphemeralOptions options)
-        : base(value, _ => string.Empty, options) { }
+    public EnvironmentVariableEphemeral(string variable) : this(variable, new EphemeralOptions()) { }
 
-    protected override Task CleanupSelfAsync() => throw new NotImplementedException();
+    public EnvironmentVariableEphemeral(
+        string variable,
+        EphemeralOptions options)
+        : base(variable, _ => string.Empty, options) { }
+
+    protected override Task CleanupSelfAsync()
+    {
+        CleanupSelf();
+        return Task.CompletedTask;
+    }
 
     protected override Task CleanupAllAsync()
     {
