@@ -1,43 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Azure.Cosmos;
 
 namespace Ephemerally.Azure.Cosmos.Xunit;
 
 [SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
-public class EphemeralCosmosContainerFixture : EphemeralCosmosDatabaseFixture
+public class EphemeralCosmosContainerFixture(ISubjectFixture<Database> cosmosDatabaseFixture)
+    : ConsumingSubjectFixture<EphemeralCosmosContainer>
 {
-    private readonly Lazy<Task<EphemeralCosmosContainer>> _container;
+    public EphemeralCosmosContainer Container => GetOrCreateSubjectAsync().Result;
 
-    public EphemeralCosmosContainer Container => _container.Value.Result;
-
-    protected Task<EphemeralCosmosContainer> GetContainer() => _container.Value;
-
-    public EphemeralCosmosContainerFixture()
+    protected override async Task<EphemeralCosmosContainer> CreateSubjectAsync()
     {
-        _container = new(CreateContainerAsync);
+        var database = await cosmosDatabaseFixture.GetOrCreateSubjectAsync();
+        return await database.CreateEphemeralContainerAsync();
     }
 
-    protected virtual async Task<EphemeralCosmosContainer> CreateContainerAsync()
-    {
-        var db = await GetDatabase();
-        return await db.CreateEphemeralContainerAsync();
-    }
-
-    public override async Task InitializeAsync()
-    {
-        await base.InitializeAsync();
-        await _container.Value;
-    }
-
-    public override async Task DisposeAsync()
-    {
-        if (!_container.IsValueCreated) return;
-
-        await IgnoreSocketException(async () =>
-        {
-            var container = await GetContainer();
-            await container.DisposeAsync();
-        });
-
-        await base.DisposeAsync();
-    }
+    protected override Task DisposeSubjectAsync() => SafeCosmosDisposeAsync(GetOrCreateSubjectAsync);
 }
