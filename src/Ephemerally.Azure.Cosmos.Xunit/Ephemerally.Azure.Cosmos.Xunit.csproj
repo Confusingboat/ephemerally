@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ephemerally.Azure.Cosmos\Ephemerally.Azure.Cosmos.csproj" />
+    <ProjectReference Include="..\Ephemerally.Xunit\Ephemerally.Xunit.csproj" />
   </ItemGroup>
 
 </Project>

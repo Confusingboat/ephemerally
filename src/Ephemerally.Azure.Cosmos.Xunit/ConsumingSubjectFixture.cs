@@ -1,3 +1,5 @@
+using Ephemerally.Xunit;
+
 namespace Ephemerally.Azure.Cosmos.Xunit;
 
 public abstract class ConsumingSubjectFixture<TSubject> : SubjectFixture<TSubject>

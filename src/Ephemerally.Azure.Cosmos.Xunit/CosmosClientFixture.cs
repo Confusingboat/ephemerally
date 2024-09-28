@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using System.Diagnostics.CodeAnalysis;
+using Ephemerally.Xunit;
 using Xunit;
 
 namespace Ephemerally.Azure.Cosmos.Xunit;

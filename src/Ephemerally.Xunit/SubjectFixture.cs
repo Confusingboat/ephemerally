@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
-namespace Ephemerally.Azure.Cosmos.Xunit;
+namespace Ephemerally.Xunit;
 
-public interface ISubjectFixture;
+public interface ISubjectFixture : IAsyncLifetime;
 
 public interface ISubjectFixture<TSubject> : ISubjectFixture
 {
@@ -13,8 +13,7 @@ public interface ISubjectFixture<TSubject> : ISubjectFixture
 [SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
 public abstract class SubjectFixture<TSubject> :
     ISubjectFixture<TSubject>,
-    IAsyncDisposable,
-    IAsyncLifetime
+    IAsyncDisposable
 {
     private readonly Lazy<Task<TSubject>> _subject;
 
@@ -28,11 +27,11 @@ public abstract class SubjectFixture<TSubject> :
 
     protected abstract Task<TSubject> CreateSubjectAsync();
 
-    protected abstract Task DisposeSubjectAsync();
+    protected virtual Task DisposeSubjectAsync() => Task.CompletedTask;
 
     public Task InitializeAsync() => _subject.Value;
 
-    public virtual async Task DisposeAsync()
+    public async Task DisposeAsync()
     {
         if (!_subject.IsValueCreated) return;
 
