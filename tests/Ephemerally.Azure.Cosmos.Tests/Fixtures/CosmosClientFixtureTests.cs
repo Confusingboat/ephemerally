@@ -3,9 +3,11 @@ using Shouldly;
 
 namespace Ephemerally.Azure.Cosmos.Tests.Fixtures;
 
-public class DefaultCosmosEmulatorClientFixtureTests : CosmosClientFixtureTests<DefaultCosmosEmulatorClientFixture>;
+public class DefaultCosmosEmulatorClientFixtureTests
+    : CosmosClientFixtureTests<DefaultCosmosEmulatorClientFixture>;
 
-public abstract class CosmosClientFixtureTests<TFixture> where TFixture : CosmosClientFixture, new()
+public abstract class CosmosClientFixtureTests<TFixture>
+    where TFixture : CosmosClientFixture, new()
 {
     [Test]
     public async Task Fixture_provides_usable_cosmos_client()
