@@ -33,6 +33,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9
+          dotnet-quality: ga
+
       - run: |
           dotnet nuget add source `
           --username USERNAME `
