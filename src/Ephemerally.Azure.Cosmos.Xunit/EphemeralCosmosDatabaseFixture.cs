@@ -8,9 +8,12 @@ namespace Ephemerally.Azure.Cosmos.Xunit;
 public class EphemeralCosmosDatabaseFixture(ISubjectFixture<CosmosClient> cosmosClientFixture)
     : CosmosDatabaseFixture<EphemeralCosmosDatabase>
 {
+    // ReSharper disable once MemberCanBePrivate.Global
+    protected ISubjectFixture<CosmosClient> CosmosClientFixture { get; } = cosmosClientFixture;
+
     protected override async Task<EphemeralCosmosDatabase> CreateSubjectAsync()
     {
-        var client = await cosmosClientFixture.GetOrCreateSubjectAsync();
+        var client = await CosmosClientFixture.GetOrCreateSubjectAsync();
         return await client.CreateEphemeralDatabaseAsync();
     }
 }
