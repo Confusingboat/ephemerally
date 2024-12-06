@@ -1,20 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
-using Ephemerally.Xunit;
 
-namespace Ephemerally.Azure.Cosmos.Xunit;
+namespace Ephemerally.Xunit;
 
 [SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
-public abstract class DependentSubjectFixture<TSubject> : ISubjectFixture<TSubject>
+public class DependentSubjectFixture<TSubject> : ISubjectFixture<TSubject>
 {
     private readonly ISubjectFixture<TSubject> _implementation;
-    private readonly ISubjectFixture[] _managedFixtures;
+    private readonly ISubjectFixture[] _dependencies;
 
-    protected DependentSubjectFixture(
+    public DependentSubjectFixture(
         ISubjectFixture<TSubject> implementation,
-        params ISubjectFixture[] managedFixtures)
+        params ISubjectFixture[] dependencies)
     {
         _implementation = implementation;
-        _managedFixtures = managedFixtures;
+        _dependencies = dependencies;
     }
 
     public Task<TSubject> GetOrCreateSubjectAsync() => _implementation.GetOrCreateSubjectAsync();
@@ -30,7 +29,7 @@ public abstract class DependentSubjectFixture<TSubject> : ISubjectFixture<TSubje
         finally
         {
             var exceptions = new List<Exception>();
-            await Task.WhenAll(_managedFixtures.Select(async x =>
+            await Task.WhenAll(_dependencies.Select(async x =>
                 {
                     try
                     {
