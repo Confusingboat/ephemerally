@@ -1,27 +1,19 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Ephemerally.Xunit;
 using Microsoft.Azure.Cosmos;
-using Xunit;
 
 namespace Ephemerally.Azure.Cosmos.Xunit;
 
-internal abstract class EphemeralCosmosContainerFixture :
-    IAsyncDisposable,
-    IAsyncLifetime
+[SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
+public class EphemeralCosmosContainerFixture(ISubjectFixture<Database> cosmosDatabaseFixture)
+    : CosmosContainerFixture<EphemeralCosmosContainer>
 {
-    private Lazy<ValueTask<EphemeralCosmosContainer>> _container;
+    // ReSharper disable once MemberCanBePrivate.Global
+    protected ISubjectFixture<Database> CosmosDatabaseFixture { get; } = cosmosDatabaseFixture;
 
-    protected EphemeralCosmosContainerFixture(
-        Database database,
-        EphemeralCreationOptions options)
+    protected override async Task<EphemeralCosmosContainer> CreateSubjectAsync()
     {
-        _container = new(async () => await database.CreateEphemeralContainerAsync(options).ConfigureAwait(false));
+        var database = await CosmosDatabaseFixture.GetOrCreateSubjectAsync();
+        return await database.CreateEphemeralContainerAsync();
     }
-
-    async Task IAsyncLifetime.InitializeAsync() =>
-        await _container.Value.ConfigureAwait(false);
-
-    async Task IAsyncLifetime.DisposeAsync() =>
-        await ((IAsyncDisposable)this).DisposeAsync().ConfigureAwait(false);
-
-    ValueTask IAsyncDisposable.DisposeAsync() =>
-        _container.Value.Result.DisposeAsync();
 }
