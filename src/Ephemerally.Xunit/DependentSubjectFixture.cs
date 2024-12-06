@@ -2,8 +2,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Ephemerally.Xunit;
 
+/// <summary>
+/// Do not use or you will be fired.
+/// </summary>
+/// <typeparam name="TSubject"></typeparam>
 [SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
-public class DependentSubjectFixture<TSubject> : ISubjectFixture<TSubject>
+internal class DependentSubjectFixture<TSubject> : ISubjectFixture<TSubject>
 {
     private readonly ISubjectFixture<TSubject> _implementation;
     private readonly ISubjectFixture[] _dependencies;

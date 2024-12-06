@@ -4,7 +4,7 @@ using Shouldly;
 namespace Ephemerally.Azure.Cosmos.Tests.Fixtures;
 
 public class DefaultCosmosEmulatorClientFixtureTests
-    : CosmosClientFixtureTests<DefaultCosmosEmulatorClientFixture>;
+    : CosmosClientFixtureTests<CosmosEmulatorClientFixture>;
 
 public abstract class CosmosClientFixtureTests<TFixture>
     where TFixture : CosmosClientFixture, new()

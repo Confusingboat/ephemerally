@@ -5,7 +5,7 @@ using Shouldly;
 namespace Ephemerally.Azure.Cosmos.Tests.Fixtures;
 
 public class DefaultEphemeralCosmosDatabaseFixtureTests
-    : CosmosDatabaseFixtureTests<DefaultEphemeralCosmosDatabaseFixture>;
+    : CosmosDatabaseFixtureTests<EphemeralCosmosDatabaseFixture>;
 
 public abstract class CosmosDatabaseFixtureTests<TFixture>
     where TFixture : ICosmosDatabaseFixture<Database>, new()
