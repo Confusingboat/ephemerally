@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using Ephemerally.Xunit;
+using StackExchange.Redis;
 using Xunit;
 
 namespace Ephemerally.Redis.Xunit;
@@ -12,26 +13,18 @@ public class RedisMultiplexerFixture<TEphemeralRedisInstance>()
     : RedisMultiplexerFixture(new TEphemeralRedisInstance())
     where TEphemeralRedisInstance : IRedisInstanceFixture, new();
 
-public class RedisMultiplexerFixture : IRedisMultiplexerFixture, IAsyncLifetime, IAsyncDisposable
+public class RedisMultiplexerFixture(ISubjectFixture<IRedisInstance> redisInstanceFixture) 
+    : SubjectFixture<IConnectionMultiplexer>, IRedisMultiplexerFixture, IAsyncLifetime, IAsyncDisposable
 {
     private bool _disposed;
 
-    private readonly IRedisInstanceFixture _redisInstanceFixture;
-    private readonly Lazy<Task<IConnectionMultiplexer>> _multiplexer;
+    protected ISubjectFixture<IRedisInstance> RedisInstanceFixture { get; } = redisInstanceFixture;
 
-    public IConnectionMultiplexer Multiplexer => _multiplexer.Value.Result;
-
-    protected Task<IConnectionMultiplexer> GetMultiplexer() => _multiplexer.Value;
+    public IConnectionMultiplexer Multiplexer => GetOrCreateSubjectAsync().Result;
 
     public RedisMultiplexerFixture() : this(UnmanagedDefaultLocalRedisInstanceFixture.DefaultLocalRedisInstanceFixture) { }
 
-    protected RedisMultiplexerFixture(IRedisInstanceFixture redisInstanceFixture)
-    {
-        _redisInstanceFixture = redisInstanceFixture;
-        _multiplexer = new Lazy<Task<IConnectionMultiplexer>>(CreateMultiplexerAsync);
-    }
-
-    protected virtual async Task<IConnectionMultiplexer> CreateMultiplexerAsync() =>
+    protected override async Task<IConnectionMultiplexer> CreateSubjectAsync() =>
         await ConnectionMultiplexer.ConnectAsync(_redisInstanceFixture.ConnectionString);
 
     public virtual async Task InitializeAsync()
@@ -39,7 +32,7 @@ public class RedisMultiplexerFixture : IRedisMultiplexerFixture, IAsyncLifetime,
         await _redisInstanceFixture.InitializeAsync();
     }
 
-    public virtual async Task DisposeAsync()
+    public override async Task DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;

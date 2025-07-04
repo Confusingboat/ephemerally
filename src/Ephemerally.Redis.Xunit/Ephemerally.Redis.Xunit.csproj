@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ephemerally.Redis\Ephemerally.Redis.csproj" />
+    <ProjectReference Include="..\Ephemerally.Xunit\Ephemerally.Xunit.csproj" />
   </ItemGroup>
 
   <ItemGroup>
