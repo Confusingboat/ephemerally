@@ -16,8 +16,8 @@ public class DatabaseFixtureUsageExampleTests(EphemeralCosmosDatabaseFixture fix
 
 public class CustomEphemeralDatabaseFixture() : EphemeralCosmosDatabaseFixture(new CustomCosmosClientFixture());
 
-public class CustomDatabaseFixtureWithCustomClientUsageExampleTests(CustomEphemeralDatabaseFixture fixture)
-    : IClassFixture<CustomEphemeralDatabaseFixture>
+public class CustomDatabaseFixtureWithCustomClientUsageExampleTests(EphemeralCosmosDatabaseFixture<CustomCosmosClientFixture> fixture)
+    : IClassFixture<EphemeralCosmosDatabaseFixture<CustomCosmosClientFixture>>
 {
     [Fact(Skip = "Example")]
     public async Task TestUsingDatabase()

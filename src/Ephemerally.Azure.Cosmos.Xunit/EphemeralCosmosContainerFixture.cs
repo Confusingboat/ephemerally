@@ -4,6 +4,10 @@ using Microsoft.Azure.Cosmos;
 
 namespace Ephemerally.Azure.Cosmos.Xunit;
 
+public class EphemeralCosmosContainerFixture<TDatabaseFixture>()
+    : EphemeralCosmosContainerFixture(new TDatabaseFixture())
+    where TDatabaseFixture : ISubjectFixture<Database>, new();
+
 [SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
 public class EphemeralCosmosContainerFixture(ISubjectFixture<Database> cosmosDatabaseFixture)
     : CosmosContainerFixture<EphemeralCosmosContainer>

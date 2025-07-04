@@ -4,6 +4,10 @@ using Microsoft.Azure.Cosmos;
 
 namespace Ephemerally.Azure.Cosmos.Xunit;
 
+public class EphemeralCosmosDatabaseFixture<TClientFixture>()
+    : EphemeralCosmosDatabaseFixture(new TClientFixture())
+    where TClientFixture : ISubjectFixture<CosmosClient>, new();
+
 [SuppressMessage("ReSharper", "UseConfigureAwaitFalse")]
 public class EphemeralCosmosDatabaseFixture(ISubjectFixture<CosmosClient> cosmosClientFixture)
     : CosmosDatabaseFixture<EphemeralCosmosDatabase>
@@ -18,7 +22,7 @@ public class EphemeralCosmosDatabaseFixture(ISubjectFixture<CosmosClient> cosmos
         var client = await CosmosClientFixture.GetOrCreateSubjectAsync();
         return await client.CreateEphemeralDatabaseAsync();
     }
-    
+
     protected override async Task DisposeSubjectAsync()
     {
         try
