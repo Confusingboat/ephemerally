@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using Ephemerally.Azure.Cosmos.Xunit;
+using Microsoft.Azure.Cosmos;
 
 namespace Ephemerally.Azure.Cosmos.Tests;
 
@@ -7,7 +8,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task Should_create_container_and_tear_it_down()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
         var sut = await db.CreateEphemeralContainerAsync();
 
@@ -21,7 +22,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task User_supplied_container_should_be_torn_down()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
 
         var userSuppliedContainer = (await db.CreateContainerAsync("user-supplied-container", "/id")).Container;
@@ -38,7 +39,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task CleanupBehavior_SelfAndExpired_should_remove_self_and_expired_orphaned_container()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
 
         var orphanContainer = await db.CreateEphemeralContainerAsync(new EphemeralCreationOptions(DateTimeOffset.MinValue));
@@ -58,7 +59,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task CleanupBehavior_SelfOnly_should_remove_self_and_not_remove_unexpired_orphaned_container()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
         var orphanContainer = await db.CreateEphemeralContainerAsync(new EphemeralCreationOptions(DateTimeOffset.MaxValue));
 
@@ -77,7 +78,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task CleanupBehavior_SelfOnly_should_remove_self_and_not_remove_expired_orphaned_container()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
         var orphanContainer = await db.CreateEphemeralContainerAsync(new EphemeralCreationOptions(DateTimeOffset.MinValue));
 
@@ -96,7 +97,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task CleanupBehavior_NoCleanup_should_not_remove_anything()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
         var orphanContainer = await db.CreateEphemeralContainerAsync(new EphemeralCreationOptions(DateTimeOffset.MinValue));
 
@@ -117,7 +118,7 @@ public class EphemeralContainerTests
     {
         const string userSuppliedId = "user-supplied-id";
 
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
 
         await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new ContainerProperties { Id = userSuppliedId });
@@ -129,7 +130,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task Should_create_container_when_container_properties_Id_is_not_provided()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
 
         await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new());
@@ -142,7 +143,7 @@ public class EphemeralContainerTests
     {
         const string userSuppliedKey = "/userSuppliedKey";
 
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
 
         await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new ContainerProperties { PartitionKeyPath = userSuppliedKey });
@@ -153,7 +154,7 @@ public class EphemeralContainerTests
     [Test]
     public async Task Should_create_container_when_container_properties_PartitionKeyPath_is_not_provided()
     {
-        var client = CosmosEmulator.Client;
+        using var client = CosmosEmulator.GetClient();
         await using var db = await client.CreateEphemeralDatabaseAsync();
 
         await using var sut = await db.CreateEphemeralContainerAsync(containerProperties: new());
