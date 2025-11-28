@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using System.Diagnostics;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Ephemerally.Azure.Cosmos;
 
