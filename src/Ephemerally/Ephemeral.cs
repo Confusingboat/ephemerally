@@ -6,21 +6,14 @@ public abstract class Ephemeral<TValue> : IEphemeral<TValue>
     private bool _disposed;
 
     private readonly EphemeralOptions _options;
-    private readonly EphemeralMetadata _metadata;
-    private readonly TValue _object;
 
-    private string FullName => _metadata.FullName;
-    public DateTimeOffset Expiration => _metadata.Expiration!.Value;
-    public IEphemeralMetadata Metadata => _metadata;
-
-    protected Ephemeral(TValue value, Func<TValue, string> getFullName, EphemeralOptions options)
+    protected Ephemeral(TValue value, EphemeralOptions options)
     {
-        _object = value;
+        Value = value;
         _options = options;
-        _metadata = EphemeralMetadata.Parse(getFullName(value));
     }
 
-    public TValue Value => _object ?? throw new InvalidOperationException("The object has not been created yet.");
+    public TValue Value => field ?? throw new InvalidOperationException("The object has not been created yet.");
 
     /// <summary>
     /// In an overridden implementation, this method should delete the TObject.

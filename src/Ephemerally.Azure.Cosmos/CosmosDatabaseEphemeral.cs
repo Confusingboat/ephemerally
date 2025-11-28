@@ -7,11 +7,11 @@ public class CosmosDatabaseEphemeral : Ephemeral<Database>
     public CosmosDatabaseEphemeral(
         Database database,
         EphemeralOptions options = default)
-        : base(database, x => x.Id, options.OrDefault())
+        : base(database, options.OrDefault())
     { }
 
     protected override Task CleanupSelfAsync() =>
-        Value.Client.TryDeleteDatabaseAsync(Metadata.FullName);
+        Value.Client.TryDeleteDatabaseAsync(Value.Id);
 
     protected override Task CleanupAllAsync() =>
         Value.Client.TryCleanupDatabasesAsync();
