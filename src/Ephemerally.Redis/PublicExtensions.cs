@@ -6,13 +6,16 @@ namespace Ephemerally;
 
 public static class PublicExtensions
 {
-    public static IEphemeralRedisDatabase AsEphemeral(this IDatabase database) =>
-        database is null or IEphemeralRedisDatabase
-            ? (IEphemeralRedisDatabase)database
-            : database.ToEphemeral();
+    extension(IDatabase database)
+    {
+        public IEphemeralRedisDatabase AsEphemeral() =>
+            database is null or IEphemeralRedisDatabase
+                ? (IEphemeralRedisDatabase)database
+                : database.ToEphemeral();
 
-    public static IEphemeralRedisDatabase ToEphemeral(this IDatabase database) =>
-        new EphemeralRedisDatabase(new RedisDatabaseEphemeral(database));
+        public IEphemeralRedisDatabase ToEphemeral() =>
+            new EphemeralRedisDatabase(new RedisDatabaseEphemeral(database));
+    }
 
     public static IEphemeralRedisDatabase GetEphemeralDatabase(
         this IConnectionMultiplexer multiplexer,
@@ -22,22 +25,27 @@ public static class PublicExtensions
 
     #region EphemeralConnectionMultiplexer
 
-    public static EphemeralConnectionMultiplexer AsEphemeralMultiplexer(this IConnectionMultiplexer multiplexer) =>
-        multiplexer as EphemeralConnectionMultiplexer ?? multiplexer.ToEphemeralMultiplexer();
+    extension(IConnectionMultiplexer multiplexer)
+    {
+        public EphemeralConnectionMultiplexer AsEphemeralMultiplexer() =>
+            multiplexer as EphemeralConnectionMultiplexer ?? multiplexer.ToEphemeralMultiplexer();
 
-    public static EphemeralConnectionMultiplexer ToEphemeralMultiplexer(this IConnectionMultiplexer multiplexer) =>
-        new(multiplexer);
+        public EphemeralConnectionMultiplexer ToEphemeralMultiplexer() =>
+            new(multiplexer);
+    }
 
     #endregion
 
     #region PooledConnectionMultiplexer
 
-    public static PooledConnectionMultiplexer AsPooledMultiplexer(this IConnectionMultiplexer multiplexer) =>
-        multiplexer as PooledConnectionMultiplexer ?? multiplexer.ToPooledMultiplexer();
+    extension(IConnectionMultiplexer multiplexer)
+    {
+        public PooledConnectionMultiplexer AsPooledMultiplexer() =>
+            multiplexer as PooledConnectionMultiplexer ?? multiplexer.ToPooledMultiplexer();
 
-    public static PooledConnectionMultiplexer ToPooledMultiplexer(this IConnectionMultiplexer multiplexer) =>
-        new(multiplexer);
-   
+        public PooledConnectionMultiplexer ToPooledMultiplexer() =>
+            new(multiplexer);
+    }
 
     #endregion
 }

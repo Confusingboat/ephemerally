@@ -8,28 +8,28 @@ public static class PublicExtensions
 {
     private const string DefaultPartitionKeyPath = "/id";
 
-    public static EphemeralCosmosDatabase ToEphemeral(this Database database, EphemeralOptions options = default) =>
+    public static EphemeralCosmosDatabase ToEphemeral(this Database database, EphemeralOptions options = null) =>
         new(new CosmosDatabaseEphemeral(database, options));
 
-    public static EphemeralCosmosContainer ToEphemeral(this Container container, EphemeralOptions options = default) =>
+    public static EphemeralCosmosContainer ToEphemeral(this Container container, EphemeralOptions options = null) =>
         new(new CosmosContainerEphemeral(container, options));
 
     public static async Task<EphemeralCosmosDatabase> CreateEphemeralDatabaseAsync(
         this CosmosClient client,
-        EphemeralCreationOptions options = default)
+        EphemeralCreationOptions options = null)
     {
-        var metadata = options.OrDefault().GetNewMetadata();
+        var metadata = options.OrDefault().GetNewNamedMetadata();
         var response = await client.CreateDatabaseIfNotExistsAsync(metadata.FullName).ConfigureAwait(false);
         return client.GetDatabase(response.Resource.Id).ToEphemeral(options);
     }
 
     public static async Task<EphemeralCosmosContainer> CreateEphemeralContainerAsync(
         this Database database,
-        EphemeralCreationOptions options = default,
-        ContainerProperties containerProperties = default,
-        ThroughputProperties throughputProperties = default)
+        EphemeralCreationOptions options = null,
+        ContainerProperties containerProperties = null,
+        ThroughputProperties throughputProperties = null)
     {
-        var metadata = options.OrDefault().GetNewMetadata();
+        var metadata = options.OrDefault().GetNewNamedMetadata();
         containerProperties ??= new();
         containerProperties.Id ??= metadata.FullName;
         containerProperties.PartitionKeyPath ??= DefaultPartitionKeyPath;
@@ -38,14 +38,14 @@ public static class PublicExtensions
     }
 
     public static IEphemeralMetadata GetEphemeralMetadata(this DatabaseProperties container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
     
     public static IEphemeralMetadata GetEphemeralMetadata(this Database container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
 
     public static IEphemeralMetadata GetEphemeralMetadata(this ContainerProperties container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
 
     public static IEphemeralMetadata GetEphemeralMetadata(this Container container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
 }

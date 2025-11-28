@@ -1,6 +1,6 @@
 namespace Ephemerally;
 
-public readonly record struct EphemeralMetadata : IEphemeralMetadata
+public readonly record struct NamedEphemeralMetadata : IEphemeralMetadata
 {
     private const string PrefixValue = "E";
 
@@ -14,7 +14,7 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     /// Non-ephemeral constructor
     /// </summary>
     /// <param name="fullName"></param>
-    private EphemeralMetadata(string fullName)
+    private NamedEphemeralMetadata(string fullName)
     {
         FullName = fullName;
     }
@@ -26,11 +26,11 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
     /// <param name="nonce"></param>
     /// <param name="friendlyName"></param>
     /// <param name="fullName"></param>
-    private EphemeralMetadata(
+    private NamedEphemeralMetadata(
         DateTimeOffset expiration,
         string nonce,
         string friendlyName,
-        string fullName = default)
+        string fullName = null)
     {
         FullName = fullName ?? GetFullName(expiration.ToUnixTimeMilliseconds(), nonce, friendlyName);
         Expiration = expiration;
@@ -47,14 +47,14 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
         string name) =>
         $"{PrefixValue}_{expirationTimestamp}_{nonce}_{name}";
 
-    internal static EphemeralMetadata Parse(string fullName) =>
+    internal static NamedEphemeralMetadata Parse(string fullName) =>
         fullName.Split('_') is
         [PrefixValue, var ts, var nonce, var friendlyName] &&
         long.TryParse(ts, out var timestamp)
             ? new(DateTimeOffset.FromUnixTimeMilliseconds(timestamp), nonce, friendlyName, fullName)
             : new(fullName);
 
-    internal static EphemeralMetadata New(
+    internal static NamedEphemeralMetadata New(
         string name,
         DateTimeOffset? expiration)
     {
@@ -66,5 +66,5 @@ public readonly record struct EphemeralMetadata : IEphemeralMetadata
         return new(expirationTimestamp, nonce, name);
     }
 
-    public static EphemeralMetadata Empty => new(string.Empty);
+    public static NamedEphemeralMetadata Empty => new(string.Empty);
 }

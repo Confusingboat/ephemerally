@@ -2,7 +2,7 @@
 
 namespace Ephemerally.Redis;
 
-public class RedisDatabaseEphemeral(IDatabase value) : Ephemeral<IDatabase>(value, x => x.Database.ToString(), EphemeralCreationOptions),
+public class RedisDatabaseEphemeral(IDatabase value) : Ephemeral<IDatabase>(value, EphemeralCreationOptions),
     IDisposable
 {
     private static readonly EphemeralCreationOptions EphemeralCreationOptions = new()

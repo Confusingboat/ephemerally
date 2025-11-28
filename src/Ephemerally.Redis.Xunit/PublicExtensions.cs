@@ -5,9 +5,12 @@ namespace Ephemerally;
 
 public static class PublicExtensions
 {
-    public static ConnectionMultiplexer GetMultiplexer(this IRedisInstanceFixture fixture) =>
-        ConnectionMultiplexer.Connect(fixture.ConnectionString);
+    extension(IRedisInstanceFixture fixture)
+    {
+        public ConnectionMultiplexer GetMultiplexer() =>
+            ConnectionMultiplexer.Connect(fixture.ConnectionString);
 
-    public static Task<ConnectionMultiplexer> GetMultiplexerAsync(this IRedisInstanceFixture fixture) =>
-        ConnectionMultiplexer.ConnectAsync(fixture.ConnectionString);
+        public Task<ConnectionMultiplexer> GetMultiplexerAsync() =>
+            ConnectionMultiplexer.ConnectAsync(fixture.ConnectionString);
+    }
 }
