@@ -56,16 +56,16 @@ internal static class InternalExtensions
     }
 
     internal static bool IsExpired(this DatabaseProperties container) =>
-        container.Id.GetContainerMetadata().IsExpired();
+        container.Id.GetNamedMetadata().IsExpired();
 
     internal static bool IsExpired(this Database container) =>
-        container.Id.GetContainerMetadata().IsExpired();
+        container.Id.GetNamedMetadata().IsExpired();
 
     internal static bool IsExpired(this ContainerProperties container) =>
-        container.Id.GetContainerMetadata().IsExpired();
+        container.Id.GetNamedMetadata().IsExpired();
 
     internal static bool IsExpired(this Container container) =>
-        container.Id.GetContainerMetadata().IsExpired();
+        container.Id.GetNamedMetadata().IsExpired();
 
     internal static async Task<IEnumerable<DatabaseProperties>> GetExpiredDatabasesAsync(this CosmosClient client)
     {

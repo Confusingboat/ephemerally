@@ -18,7 +18,7 @@ public static class PublicExtensions
         this CosmosClient client,
         EphemeralCreationOptions options = default)
     {
-        var metadata = options.OrDefault().GetNewMetadata();
+        var metadata = options.OrDefault().GetNewNamedMetadata();
         var response = await client.CreateDatabaseIfNotExistsAsync(metadata.FullName).ConfigureAwait(false);
         return client.GetDatabase(response.Resource.Id).ToEphemeral(options);
     }
@@ -29,7 +29,7 @@ public static class PublicExtensions
         ContainerProperties containerProperties = default,
         ThroughputProperties throughputProperties = default)
     {
-        var metadata = options.OrDefault().GetNewMetadata();
+        var metadata = options.OrDefault().GetNewNamedMetadata();
         containerProperties ??= new();
         containerProperties.Id ??= metadata.FullName;
         containerProperties.PartitionKeyPath ??= DefaultPartitionKeyPath;
@@ -38,14 +38,14 @@ public static class PublicExtensions
     }
 
     public static IEphemeralMetadata GetEphemeralMetadata(this DatabaseProperties container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
     
     public static IEphemeralMetadata GetEphemeralMetadata(this Database container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
 
     public static IEphemeralMetadata GetEphemeralMetadata(this ContainerProperties container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
 
     public static IEphemeralMetadata GetEphemeralMetadata(this Container container) =>
-        container.Id.GetContainerMetadata();
+        container.Id.GetNamedMetadata();
 }
