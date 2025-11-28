@@ -30,7 +30,7 @@ public readonly record struct NamedEphemeralMetadata : IEphemeralMetadata
         DateTimeOffset expiration,
         string nonce,
         string friendlyName,
-        string fullName = default)
+        string fullName = null)
     {
         FullName = fullName ?? GetFullName(expiration.ToUnixTimeMilliseconds(), nonce, friendlyName);
         Expiration = expiration;

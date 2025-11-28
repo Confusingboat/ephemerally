@@ -6,7 +6,7 @@ public class CosmosDatabaseEphemeral : Ephemeral<Database>
 {
     public CosmosDatabaseEphemeral(
         Database database,
-        EphemeralOptions options = default)
+        EphemeralOptions options = null)
         : base(database, options.OrDefault())
     { }
 

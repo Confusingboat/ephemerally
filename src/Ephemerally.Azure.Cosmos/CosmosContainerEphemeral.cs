@@ -6,7 +6,7 @@ public class CosmosContainerEphemeral : Ephemeral<Container>
 {
     public CosmosContainerEphemeral(
         Container container,
-        EphemeralOptions options = default) :
+        EphemeralOptions options = null) :
         base(container, options.OrDefault())
     { }
 
