@@ -87,24 +87,35 @@ internal static class InternalExtensions
         }
     }
 
-    internal static async Task<bool> TryDeleteContainerAsync(this Database database, string containerId)
+    extension(Database database)
     {
-        try
+        internal async Task<bool> TryDeleteContainerAsync(string containerId)
         {
-            await database.GetContainer(containerId).DeleteContainerAsync().ConfigureAwait(false);
-            return true;
+            try
+            {
+                await database.GetContainer(containerId).DeleteContainerAsync().ConfigureAwait(false);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                return false;
+            }
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.ToString());
-            return false;
-        }
-    }
 
-    internal static async Task<IEnumerable<ContainerProperties>> GetExpiredContainersAsync(this Database database)
-    {
-        using var iterator = database.GetContainerQueryIterator<ContainerProperties>();
-        return await iterator.GetExpiredContainersAsync().ToListAsync().ConfigureAwait(false);
+        internal async Task<IEnumerable<ContainerProperties>> GetExpiredContainersAsync()
+        {
+            using var iterator = database.GetContainerQueryIterator<ContainerProperties>();
+            return await iterator.GetExpiredContainersAsync().ToListAsync().ConfigureAwait(false);
+        }
+
+        internal async Task TryCleanupContainersAsync()
+        {
+            foreach (var container in await database.GetExpiredContainersAsync().ConfigureAwait(false))
+            {
+                await database.TryDeleteContainerAsync(container.Id).ConfigureAwait(false);
+            }
+        }
     }
 
     internal static IAsyncEnumerable<ContainerProperties> GetExpiredContainersAsync(this FeedIterator<ContainerProperties> iterator) =>
@@ -112,14 +123,6 @@ internal static class InternalExtensions
             .ToAsyncEnumerable()
             .SelectResources()
             .Where(IsExpired);
-
-    internal static async Task TryCleanupContainersAsync(this Database database)
-    {
-        foreach (var container in await database.GetExpiredContainersAsync().ConfigureAwait(false))
-        {
-            await database.TryDeleteContainerAsync(container.Id).ConfigureAwait(false);
-        }
-    }
 
     internal static IAsyncEnumerable<T> OnEach<T>(this IAsyncEnumerable<T> enumerable, Action<T> action) =>
         enumerable.Select(x =>
